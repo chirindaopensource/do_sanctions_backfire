@@ -1,0 +1,4894 @@
+{
+  "identity": {
+    "title": "Do Sanctions Backfire? New Evidence on the Macroeconomic Effects of Supporting Ukraine",
+    "authors": [
+      "Vicente Rios",
+      "Izaskun Barba",
+      "Lisa Gianmoena"
+    ],
+    "corresponding_author": "Vicente Rios <vicente.rios@unipi.it>",
+    "author_affiliations": [
+      "University of Pisa, Department of Economics and Management",
+      "Universidad Publica de Navarra, Department of Economics",
+      "University of Pisa, Department of Economics and Management"
+    ],
+    "date": "September 11, 2026",
+    "keywords": [
+      "economic sanctions",
+      "Russia",
+      "Ukraine",
+      "consumer prices",
+      "common correlated effects",
+      "difference-in-differences"
+    ],
+    "jel_codes": [
+      "F51",
+      "F14",
+      "E31",
+      "C23"
+    ],
+    "replication_archive_provided": false,
+    "code_repository_named": null,
+    "paper_urls_provided": null,
+    "paper_dois_provided": null
+  },
+  "global_constants": {
+    "n_countries_final_panel": 129,
+    "n_observed_years": 25,
+    "n_country_years": 3225,
+    "n_outcomes": 4,
+    "n_controls": 8,
+    "control_lag_years": 1,
+    "T0_pre_treatment_years": 13,
+    "pre_treatment_window": [
+      2001,
+      2013
+    ],
+    "post_treatment_window": [
+      2014,
+      2024
+    ],
+    "Wave1": [
+      2014,
+      2021
+    ],
+    "Wave2": [
+      2022,
+      2024
+    ],
+    "preferred_reference_window": [
+      2019,
+      2021
+    ],
+    "alternative_reference_windows": [
+      [
+        2017,
+        2019
+      ],
+      [
+        2021,
+        2021
+      ],
+      [
+        2017,
+        2021
+      ],
+      [
+        2018,
+        2021
+      ]
+    ],
+    "n_sanctions_coded_descriptive": 43,
+    "n_sanctions_targets": 42,
+    "n_direct_arming_targets": 29,
+    "n_both_policies": 28,
+    "n_sanctions_only": 14,
+    "n_direct_arming_only": 1,
+    "n_neither_policy": 83,
+    "n_geopolitical_exclusions": 3,
+    "n_sanctions_donors_CPI": 84,
+    "n_sanctions_donors_GDPpc": 84,
+    "n_arming_donors_CPI": 96,
+    "n_arming_donors_GDPpc": 97,
+    "n_policy_outcome_estimator_runs": 8,
+    "significance_levels": {
+      "10pct": "*",
+      "5pct": "**",
+      "1pct": "***"
+    },
+    "two_sided_test": "student_t",
+    "degrees_of_freedom_rule": "N_T - 1",
+    "percentage_transform": "100 * (exp(theta_hat) - 1)",
+    "small_effect_approx": "100 * theta_hat",
+    "design_invariants": {
+      "no_post_2013_target_realization_in_own_counterfactual": true,
+      "no_treatment_information_in_eligibility_or_imputation": true,
+      "robustness_branches_never_replace_baseline": true
+    }
+  },
+  "raw_data_schemas": {
+    "wdi_raw_wide": {
+      "primary_key": [
+        "country_code",
+        "indicator_code"
+      ],
+      "columns": [
+        "country_name",
+        "country_code",
+        "indicator_name",
+        "indicator_code",
+        "1996",
+        "1997",
+        "1998",
+        "1999",
+        "2000",
+        "2001",
+        "2002",
+        "2003",
+        "2004",
+        "2005",
+        "2006",
+        "2007",
+        "2008",
+        "2009",
+        "2010",
+        "2011",
+        "2012",
+        "2013",
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024"
+      ],
+      "aggregate_row_exclusion_pattern": "^[A-Z]{3}$",
+      "vintage": null,
+      "year_columns": [
+        "1996",
+        "1997",
+        "1998",
+        "1999",
+        "2000",
+        "2001",
+        "2002",
+        "2003",
+        "2004",
+        "2005",
+        "2006",
+        "2007",
+        "2008",
+        "2009",
+        "2010",
+        "2011",
+        "2012",
+        "2013",
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024"
+      ],
+      "float_columns": [
+        "1996",
+        "1997",
+        "1998",
+        "1999",
+        "2000",
+        "2001",
+        "2002",
+        "2003",
+        "2004",
+        "2005",
+        "2006",
+        "2007",
+        "2008",
+        "2009",
+        "2010",
+        "2011",
+        "2012",
+        "2013",
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024"
+      ],
+      "int_columns": [],
+      "category_columns": [],
+      "code_columns": [
+        "country_code"
+      ],
+      "membership_columns": [
+        "country_code"
+      ],
+      "optional_extension_columns": []
+    },
+    "wdi_raw_long": {
+      "primary_key": [
+        "country_code",
+        "indicator_code",
+        "year"
+      ],
+      "columns": [
+        "country_code",
+        "country_name",
+        "indicator_code",
+        "indicator_name",
+        "year",
+        "value"
+      ],
+      "raw_missing_targets": {
+        "FP.CPI.TOTL": 25,
+        "FP.CPI.TOTL.ZG": 32,
+        "NY.GDP.PCAP.KD": 0,
+        "NY.GDP.PCAP.KD.ZG": 0,
+        "NY.GDP.PETR.RT.ZS": 403,
+        "NE.TRD.GNFS.ZS": 10,
+        "TT.PRI.MRCH.XD.WD": 645,
+        "NE.GDI.TOTL.ZS": 46,
+        "NE.CON.GOVT.ZS": 34,
+        "SP.POP.GROW": 1
+      },
+      "float_columns": [
+        "value"
+      ],
+      "int_columns": [
+        "year"
+      ],
+      "category_columns": [],
+      "code_columns": [
+        "country_code"
+      ],
+      "membership_columns": [
+        "country_code"
+      ],
+      "optional_extension_columns": []
+    },
+    "wgi_raw_long": {
+      "primary_key": [
+        "country_code",
+        "year",
+        "source_release"
+      ],
+      "columns": [
+        "country_code",
+        "country_name",
+        "year",
+        "rule_of_law",
+        "source_release"
+      ],
+      "raw_missing_target": 129,
+      "winsorizing_applied": false,
+      "float_columns": [
+        "rule_of_law"
+      ],
+      "int_columns": [
+        "year"
+      ],
+      "category_columns": [],
+      "code_columns": [
+        "country_code"
+      ],
+      "membership_columns": [
+        "country_code"
+      ],
+      "optional_extension_columns": []
+    },
+    "comtrade_block_a_raw": {
+      "description": "Russian non-gas energy (Coal, Crude oil, Refined petroleum)",
+      "products": [
+        "Coal",
+        "Crude oil",
+        "Refined petroleum"
+      ],
+      "candidate_hs_codes": {
+        "Coal": [
+          "2701"
+        ],
+        "Crude oil": [
+          "2709"
+        ],
+        "Refined petroleum": [
+          "2710"
+        ]
+      },
+      "mirror_recovery_applicable": false,
+      "columns": [
+        "reporter_code",
+        "reporter_name",
+        "partner_code",
+        "partner_name",
+        "year",
+        "product_description",
+        "product_code",
+        "trade_flow",
+        "value_usd"
+      ],
+      "float_columns": [
+        "value_usd"
+      ],
+      "int_columns": [
+        "year"
+      ],
+      "category_columns": [
+        "product_description",
+        "trade_flow"
+      ],
+      "code_columns": [
+        "reporter_code",
+        "partner_code"
+      ],
+      "membership_columns": [
+        "reporter_code",
+        "partner_code"
+      ],
+      "primary_key": [
+        "reporter_code",
+        "year",
+        "product_description"
+      ],
+      "optional_extension_columns": []
+    },
+    "comtrade_block_b_raw": {
+      "description": "Russian gas (LNG + Pipeline gas)",
+      "products": [
+        "LNG",
+        "Pipeline gas"
+      ],
+      "candidate_hs_codes": {
+        "LNG": [
+          "271111"
+        ],
+        "Pipeline gas": [
+          "271121"
+        ]
+      },
+      "row_direction_disjunction": "(trade_flow == 'import' AND reporter_code != 'RUS' AND partner_code == 'RUS') OR (trade_flow == 'export' AND reporter_code == 'RUS' AND partner_code != 'RUS')",
+      "mirror_recovery_applicable": true,
+      "columns": [
+        "reporter_code",
+        "reporter_name",
+        "partner_code",
+        "partner_name",
+        "year",
+        "product_description",
+        "trade_flow",
+        "value_usd",
+        "mirror_availability"
+      ],
+      "float_columns": [
+        "value_usd"
+      ],
+      "int_columns": [
+        "year"
+      ],
+      "category_columns": [
+        "product_description",
+        "trade_flow",
+        "mirror_availability"
+      ],
+      "code_columns": [
+        "reporter_code",
+        "partner_code"
+      ],
+      "membership_columns": [
+        "reporter_code"
+      ],
+      "primary_key": [
+        "reporter_code",
+        "partner_code",
+        "year",
+        "product_description",
+        "trade_flow"
+      ],
+      "optional_extension_columns": []
+    },
+    "comtrade_block_c_raw": {
+      "description": "World total gas (all suppliers)",
+      "partner_code": "WLD",
+      "recovered_via_values": [
+        "importer_reported",
+        "exporter_sum_substitute",
+        null
+      ],
+      "columns": [
+        "reporter_code",
+        "reporter_name",
+        "partner_code",
+        "partner_name",
+        "year",
+        "product_description",
+        "trade_flow",
+        "value_usd",
+        "recovered_via"
+      ],
+      "float_columns": [
+        "value_usd"
+      ],
+      "int_columns": [
+        "year"
+      ],
+      "category_columns": [
+        "product_description",
+        "trade_flow",
+        "recovered_via"
+      ],
+      "code_columns": [
+        "reporter_code"
+      ],
+      "membership_columns": [
+        "reporter_code"
+      ],
+      "primary_key": [
+        "reporter_code",
+        "year"
+      ],
+      "optional_extension_columns": [
+        "exporter_sum_components_json",
+        "exporter_sum_query_json",
+        "exporter_sum_source_id",
+        "exporter_sum_components_sha256"
+      ]
+    },
+    "comtrade_cell_status_raw": {
+      "primary_key": [
+        "reporter_code",
+        "year",
+        "series"
+      ],
+      "series_values": [
+        "russian_gas",
+        "world_gas",
+        "russian_non_gas"
+      ],
+      "final_status_values": [
+        "positive",
+        "verified_zero",
+        "missing"
+      ],
+      "downstream_disposition_values": [
+        "usable",
+        "imputable",
+        "case_exclusion",
+        "rejected"
+      ],
+      "columns": [
+        "reporter_code",
+        "year",
+        "series",
+        "request_type",
+        "retry_succeeded",
+        "hs_report_confirmed",
+        "value_usd",
+        "final_status",
+        "downstream_disposition"
+      ],
+      "float_columns": [
+        "value_usd"
+      ],
+      "int_columns": [
+        "year",
+        "retry_succeeded",
+        "hs_report_confirmed"
+      ],
+      "category_columns": [
+        "series",
+        "request_type",
+        "final_status",
+        "downstream_disposition"
+      ],
+      "code_columns": [
+        "reporter_code"
+      ],
+      "membership_columns": [
+        "reporter_code"
+      ],
+      "optional_extension_columns": []
+    },
+    "nominal_gdp_raw": {
+      "primary_key": [
+        "country_code",
+        "year"
+      ],
+      "indicator_code": "NY.GDP.MKTP.CD",
+      "expected_cells": 1032,
+      "positivity_assertion": true,
+      "columns": [
+        "country_code",
+        "country_name",
+        "year",
+        "indicator_code",
+        "value_usd",
+        "ingest_validation"
+      ],
+      "float_columns": [
+        "value_usd"
+      ],
+      "int_columns": [
+        "year"
+      ],
+      "category_columns": [
+        "ingest_validation"
+      ],
+      "code_columns": [
+        "country_code"
+      ],
+      "membership_columns": [
+        "country_code"
+      ],
+      "optional_extension_columns": []
+    },
+    "policy_ledger_raw": {
+      "primary_key": [
+        "country_code",
+        "policy",
+        "document_title"
+      ],
+      "priority_rank_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "coding_decision_values": [
+        "accepted",
+        "rejected",
+        "excluded_from_target"
+      ],
+      "columns": [
+        "country_code",
+        "policy",
+        "issuing_authority",
+        "document_title",
+        "publication_date",
+        "archived_source",
+        "policy_type",
+        "entry_year",
+        "coding_decision",
+        "priority_rank"
+      ],
+      "float_columns": [],
+      "int_columns": [
+        "entry_year",
+        "priority_rank"
+      ],
+      "category_columns": [
+        "policy",
+        "archived_source",
+        "policy_type",
+        "coding_decision"
+      ],
+      "code_columns": [
+        "country_code"
+      ],
+      "membership_columns": [
+        "country_code"
+      ],
+      "optional_extension_columns": [
+        "adjudication_selected",
+        "adjudicated_entry_year",
+        "adjudication_note"
+      ]
+    },
+    "country_metadata_raw": {
+      "primary_key": [
+        "country_code"
+      ],
+      "region_vocabulary": [
+        "East Asia & Pacific",
+        "Europe & Central Asia",
+        "Latin America & Caribbean",
+        "Middle East & North Africa",
+        "North America",
+        "South Asia",
+        "Sub-Saharan Africa"
+      ],
+      "geopolitical_role_values": [
+        "none",
+        "donor_ban",
+        "target_and_donor_ban",
+        "critical_window_exclusion",
+        "target_exclusion_from_ATT"
+      ],
+      "columns": [
+        "country_code",
+        "country_name",
+        "world_bank_region",
+        "geopolitical_role",
+        "retained_in_final_panel"
+      ],
+      "float_columns": [],
+      "int_columns": [
+        "retained_in_final_panel"
+      ],
+      "category_columns": [
+        "world_bank_region",
+        "geopolitical_role"
+      ],
+      "code_columns": [
+        "country_code"
+      ],
+      "membership_columns": [],
+      "optional_extension_columns": []
+    }
+  },
+  "equation_parameters": {
+    "eq1_treatment_donor_sets": {
+      "ever_treated_rule": "max_t D_it == 1",
+      "never_treated_rule": "max_t D_it == 0",
+      "target_subset_rule": "T_star_subset_of_T",
+      "donor_subset_rule": "C_Y_subset_of_C"
+    },
+    "eq2_reporting_windows": {
+      "Wave1": [
+        2014,
+        2021
+      ],
+      "Wave1_length": 8,
+      "Wave2": [
+        2022,
+        2024
+      ],
+      "Wave2_length": 3
+    },
+    "eq3_untreated_outcome_model": {
+      "K_controls": 8,
+      "control_lag": 1,
+      "loading_vector_dimension": 2,
+      "loading_components": [
+        "mu_i_country_intercept",
+        "lambda_i_donor_CSA_loading"
+      ],
+      "factor_dimension": 2
+    },
+    "eq4_donor_factor_proxy": {
+      "donor_set": "never_treated_only",
+      "component_1": "constant_one",
+      "component_2": "donor_outcome_cross_sectional_average",
+      "treated_realizations_included": false,
+      "parsimonious_specification": "own_outcome_CSA_only"
+    },
+    "eq5_pre_treatment_OLS": {
+      "pre_treatment_end_year": 2013,
+      "pre_treatment_start_year": 2001,
+      "T0": 13,
+      "estimator": "pooled_OLS_with_factor_projection",
+      "residual_maker_applied": true
+    },
+    "eq6_pooled_beta_estimator": {
+      "beta_dimension": 8,
+      "M_F_definition": "I - F(F'F)^{-1}F'",
+      "residualized_on": [
+        "constant",
+        "donor_CSA"
+      ],
+      "inversion_baseline": "Moore_Penrose_pseudo_inverse_of_pooled_residualized_cross_product_in_all_cases",
+      "stabilization": "SVD_rank_and_condition_diagnostics; Moore_Penrose_pseudo_inverse"
+    },
+    "eq7_unit_specific_loadings": {
+      "dimension": 2,
+      "estimated_for": [
+        "all_targets",
+        "all_donors"
+      ],
+      "estimation_source": "pre_treatment_residuals",
+      "why_donors_included": "Donors' loadings are needed when they enter downstream counterfactual-placebo constructions and are used to enforce the design's symmetric treatment of the estimation set S_Y."
+    },
+    "eq8_covariate_loadings": {
+      "Lambda_dimension": [
+        2,
+        8
+      ],
+      "estimated_for": "targets_only",
+      "estimation_source": "pre_treatment_only",
+      "why_only_targets": "Donors' post-2013 covariates are directly observed; a simulated counterfactual covariate path is needed only for targets."
+    },
+    "eq9_counterfactual_covariates": {
+      "post_treatment_start_year": 2014,
+      "covariates_simulated": true,
+      "observed_covariates_used_post_treatment": false
+    },
+    "eq10_counterfactual_outcome": {
+      "post_treatment_start_year": 2014,
+      "no_target_realized_data_post_treatment": true
+    },
+    "eq11_country_year_gap": {
+      "sign_convention": "observed_minus_counterfactual",
+      "positive_interpretation": "above_imputed_untreated",
+      "negative_interpretation": "below_imputed_untreated"
+    },
+    "eq12_window_ATT": {
+      "country_weighting": "equal",
+      "year_weighting": "equal",
+      "N_T_sanctions": 42,
+      "N_T_direct_arming": 29
+    },
+    "eq13_late_wave1_baseline": {
+      "baseline_window": [
+        2019,
+        2021
+      ],
+      "baseline_length": 3,
+      "aggregation": "country_specific_mean_gap"
+    },
+    "eq14_stable_gap_continuation": {
+      "counterfactual_shift": "b_hat_i",
+      "maintained_assumption": "stable_gap_continuation"
+    },
+    "eq15_incremental_wave2_ATT": {
+      "preferred_estimand": true,
+      "equivalent_forms": [
+        "continuation_counterfactual_difference",
+        "difference_of_country_means"
+      ],
+      "identity_check_required": true,
+      "identity_tolerance": "1e-10"
+    },
+    "eq16_country_dispersion_SE": {
+      "se_formula": "sd(d_i) / sqrt(N_T)",
+      "df": "N_T - 1",
+      "test": "two_sided_student_t",
+      "stars_source": "this_equation_only",
+      "bootstrap_and_placebo_role": "complementary_diagnostics_only"
+    },
+    "eq17_exposure_measure": {
+      "gas_types": [
+        "Coal",
+        "Crude",
+        "Refined",
+        "Gas"
+      ],
+      "aggregation_window_length": 4,
+      "windows": [
+        [
+          2010,
+          2013
+        ],
+        [
+          2018,
+          2021
+        ]
+      ],
+      "numerator_currency": "current_USD",
+      "denominator_series": "NY.GDP.MKTP.CD",
+      "standardization": "within_regression_sample"
+    },
+    "eq18_exposure_heterogeneity": {
+      "Post_period": [
+        2022,
+        2024
+      ],
+      "omitted_period": "all_years_before_2022",
+      "controls_included": false,
+      "country_intercepts": true,
+      "country_specific_loadings_on_Ybar_Ct": true,
+      "standard_error": "country_clustered",
+      "sum_se_computation": "full_covariance_matrix",
+      "coefficient_semantics": {
+        "beta_1": "sanctioner_non_sanctioner_differential_at_mean_exposure",
+        "beta_2": "exposure_slope_among_non_sanctioners",
+        "beta_3": "difference_between_coalition_and_non_coalition_slopes",
+        "beta_2_plus_beta_3": "total_post_2022_exposure_slope_within_coalition"
+      },
+      "regression_samples": {
+        "2018_2021_strict": {
+          "N_all": 118,
+          "N_sanctioners": 39
+        },
+        "2010_2013_strict": {
+          "N_all": 119,
+          "N_sanctioners": 39
+        },
+        "2018_2021_extended": {
+          "N_all": 119,
+          "N_sanctioners": 39
+        },
+        "2010_2013_extended": {
+          "N_all": 120,
+          "N_sanctioners": 39
+        }
+      }
+    },
+    "eqA1_gas_share": {
+      "numerator": "sum_of_completed_russian_gas_over_window",
+      "denominator": "sum_of_completed_world_gas_over_window",
+      "recomputed_from_components": true,
+      "interpolation_of_ratio": false
+    },
+    "eqA2_energy_gdp": {
+      "numerator": "sum_of_completed_(russian_non_gas_+_russian_gas)_over_window",
+      "denominator": "sum_of_nominal_gdp_over_window",
+      "recomputed_from_components": true
+    },
+    "eqB1_donor_mean_proxy": {
+      "formula": "ybar_t = (1/|C_Y|) * sum_{j in C_Y} Y_jt ; f_hat_t = (1, ybar_t)'"
+    },
+    "eqB2_skipped_in_source": {
+      "status": "tag_not_present_in_manuscript"
+    },
+    "eqB3_residual_maker": {
+      "formula": "M_F = I - F * F^+",
+      "pseudoinverse": "Moore-Penrose"
+    },
+    "eqB4_pooled_beta_pseudoinverse": {
+      "formula": "beta_hat = (sum_i X~'_i X~_i)^+ (sum_i X~'_i Y~_i)"
+    },
+    "eqB5_covariate_loadings_pseudoinverse": {
+      "formula": "Lambda_hat_i = F^+ X_i"
+    },
+    "eqB6_gamma_loadings_pseudoinverse": {
+      "formula": "gamma_hat_i = F^+ (Y_i - X_i beta_hat)"
+    },
+    "eqB7_counterfactual_covariates": {
+      "formula": "X_hat_{i,t-1}(inf) = Lambda_hat_i' f_hat_t ; t >= 2014"
+    },
+    "eqB8_counterfactual_outcome": {
+      "formula": "Y_hat_{it}(inf) = X_hat_{i,t-1}(inf)' beta_hat + gamma_hat_i' f_hat_t ; t >= 2014"
+    },
+    "eqB10_to_B13_reconstruction": {
+      "status": "reconstructed_from_equations_12_to_15",
+      "reconstruction": [
+        "B10: country_year gaps -> country_window_mean g_bar_i,W",
+        "B11: coalition average ATT_W = mean over i of g_bar_i,W",
+        "B12: baseline b_hat_i = mean over 2019-2021 of g_it",
+        "B13: incremental ATT_Inc,2 = mean over i of (mean_{2022-2024} g_it - b_hat_i)"
+      ],
+      "equivalent_to": [
+        "eq12",
+        "eq13",
+        "eq15"
+      ],
+      "source_status": "referenced_but_not_typeset",
+      "equation_numbering_is_reconstructed": true,
+      "full_formulas": {
+        "B10_reconstructed": "\\bar g_{i,\\mathcal W}=|\\mathcal W|^{-1}\\sum_{t\\in\\mathcal W}\\hat g_{it}",
+        "B11_reconstructed": "\\widehat{\\mathrm{ATT}}_{\\mathcal W}=N_T^{-1}\\sum_{i\\in\\mathcal T^*}\\bar g_{i,\\mathcal W}",
+        "B12_reconstructed": "\\hat b_i=3^{-1}\\sum_{t=2019}^{2021}\\hat g_{it}",
+        "B13_reconstructed": "\\widehat{\\mathrm{ATT}}_{\\mathrm{Inc},2}=N_T^{-1}\\sum_{i\\in\\mathcal T^*}(\\bar g_{i,\\mathcal W_2}-\\hat b_i)"
+      }
+    },
+    "eq_unnumbered_residual_maker": {
+      "formula": "M_F = I - F (F'F)^{-1} F'",
+      "location": "Section 4.3 Step 2",
+      "used_by": [
+        "eq6",
+        "eq7",
+        "eqB3"
+      ]
+    },
+    "eq_unnumbered_log_percentage": {
+      "exact": "100 * (exp(theta_hat) - 1)",
+      "approximation": "100 * theta_hat",
+      "location": "Section 4.4 (interpretation)",
+      "applies_to": [
+        "all_log_point_estimates"
+      ]
+    }
+  },
+  "algorithm_parameters": {
+    "A1_two_wave_CCEDID_imputation": {
+      "n_steps": 5,
+      "step_names": [
+        "construct_donor_factor",
+        "estimate_pre_treatment_relationship",
+        "construct_post_treatment_counterfactual",
+        "calculate_country_year_gaps",
+        "aggregate_gaps"
+      ],
+      "iterated_over": [
+        [
+          "strict_sanctions",
+          "log_CPI"
+        ],
+        [
+          "strict_sanctions",
+          "log_real_GDPpc"
+        ],
+        [
+          "strict_sanctions",
+          "inflation_rate"
+        ],
+        [
+          "strict_sanctions",
+          "GDPpc_growth_rate"
+        ],
+        [
+          "direct_arming",
+          "log_CPI"
+        ],
+        [
+          "direct_arming",
+          "log_real_GDPpc"
+        ],
+        [
+          "direct_arming",
+          "inflation_rate"
+        ],
+        [
+          "direct_arming",
+          "GDPpc_growth_rate"
+        ]
+      ],
+      "per_run_refitted_objects": [
+        "F_hat",
+        "beta_hat",
+        "alpha_hat_i",
+        "Lambda_hat_i"
+      ]
+    },
+    "A2_incremental_wave2": {
+      "baseline_window": [
+        2019,
+        2021
+      ],
+      "Wave2_window": [
+        2022,
+        2024
+      ],
+      "stable_gap_assumption": true,
+      "output": "ATT_Inc_2",
+      "dual_form_equivalence_check_required": true
+    },
+    "B1_country_history_bootstrap": {
+      "replicates_B": 500,
+      "resampling_unit": "whole_country_path",
+      "preserves_within_country_dependence": true,
+      "re_estimate": "entire_A1_plus_A2_design",
+      "percentile_bounds": [
+        0.025,
+        0.975
+      ],
+      "seed": null,
+      "invalid_resample_policy": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws."
+    },
+    "B2_region_block_bootstrap": {
+      "replicates_B": 500,
+      "resampling_unit": "world_bank_region",
+      "keeps_within_region_together": true,
+      "region_vocabulary_key": "country_metadata_raw.region_vocabulary",
+      "re_estimate": "entire_A1_plus_A2_design",
+      "percentile_bounds": [
+        0.025,
+        0.975
+      ],
+      "seed": null,
+      "invalid_resample_policy": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws."
+    },
+    "B3_size_matched_placebo": {
+      "replicates_M": 500,
+      "pseudo_treated_draw_from": "never_treated_donor_pool",
+      "size_match_by_policy": {
+        "sanctions": {
+          "pseudo_treated": 42,
+          "pseudo_donors": 42
+        },
+        "direct_arming_CPI": {
+          "pseudo_treated": 29,
+          "pseudo_donors": 67
+        },
+        "direct_arming_GDPpc": {
+          "pseudo_treated": 29,
+          "pseudo_donors": 68
+        }
+      },
+      "tail_statistic": "absolute_value_of_estimate",
+      "plus_one_correction_formula": "p_hat = (1 + count(|theta_m| >= |theta_obs|)) / (1 + M)",
+      "not_a_confidence_interval": true,
+      "not_a_star_source": true,
+      "seed": null
+    },
+    "C1_eligibility_screening": {
+      "outcome_missing_max": 0.35,
+      "control_high_missing_max": 0.25,
+      "control_high_missing_count_max": 1,
+      "control_single_missing_max": 0.65,
+      "critical_window": [
+        2019,
+        2024
+      ],
+      "critical_window_years": 6,
+      "critical_outcome_missing_max": 0.25,
+      "critical_window_max_missing_per_outcome": 1,
+      "uses_policy_indicators": false,
+      "uses_estimated_effects": false,
+      "fixed_before_completion": true,
+      "whole_period_window": [
+        2000,
+        2024
+      ],
+      "expected_otherwise_eligible": 131,
+      "expected_final": 129,
+      "documented_exclusions": {
+        "SYR": 5,
+        "SDN": 2
+      }
+    },
+    "C2_control_completion": {
+      "priority_1": "internal_linear_interpolation",
+      "priority_2": "trailing_last_observation_carried_forward",
+      "priority_3": "leading_first_observation_carried_backward",
+      "priority_3_max_years": 3,
+      "priority_3_applies_to": "leading_gaps_only",
+      "priority_4": "local_linear_trend_backcast",
+      "priority_4_anchor_count": 5,
+      "extrapolation_bound_low": "min_series - 1_std",
+      "extrapolation_bound_high": "max_series + 1_std",
+      "non_negativity_floors": [
+        "TradeOpenness",
+        "Investment",
+        "GovConsumption"
+      ],
+      "cross_country_information_used": false,
+      "temporal_universe_completion": [
+        1996,
+        2024
+      ],
+      "temporal_universe_output": [
+        2000,
+        2024
+      ],
+      "non_negativity_column_bindings": {
+        "TradeOpenness": "TradeOpenness",
+        "Investment": "InvestmentRate",
+        "GovConsumption": "GovConsumption"
+      },
+      "dispersion_convention": "sample_SD_of_first_five_original_trend_anchors_ddof_1",
+      "insufficient_trend_anchors": "raise_for_leading_gap_longer_than_3_years_with_fewer_than_5_original_anchors"
+    },
+    "C3_outcome_repair": {
+      "leading_backcast_count": 55,
+      "leading_backcast_window": [
+        2000,
+        2007
+      ],
+      "backcast_method": "bounded_local_trend_from_own_history",
+      "internal_outcome_interpolation": false,
+      "carry_forward_cells": 2,
+      "carry_forward_country": "BIH",
+      "carry_forward_from_year": 2023,
+      "cross_country_information_used": false
+    },
+    "G0_treatment_coding_resolution": {
+      "inputs": [
+        "policy_ledger_raw"
+      ],
+      "group_by": [
+        "country_code",
+        "policy"
+      ],
+      "sort_by": [
+        "priority_rank ASC",
+        "publication_date ASC",
+        "entry_year ASC"
+      ],
+      "selection_rule": "lowest_priority_rank; earliest publication/entry ordering only when no equal-rank conflict; conflicting evidence requires recorded adjudication",
+      "secondary_material_rule": "Any ledger entry with priority_rank >= 4 is rejected unless a priority_rank <= 3 entry exists for the same (country_code, policy).",
+      "conflict_rule": "Equal-priority disagreement in entry_year or coding_decision raises unless exactly one top-priority record is adjudication_selected or a consistent adjudicated_entry_year identifies one top-priority record; a nonblank adjudication_note is mandatory. An adjudicated year need not be the earliest.",
+      "output": "binary indicators S_it for sanctions and A_it for direct_arming; one entry per country-policy from the resolved ledger.",
+      "ukraine_handling": "coded S_it = 1 from 2014; coding_decision = 'excluded_from_target'",
+      "log_every_decision": true
+    },
+    "D1_comtrade_query": {
+      "trade_universe_countries": 129,
+      "potential_cells": 1032,
+      "windows": [
+        [
+          2010,
+          2013
+        ],
+        [
+          2018,
+          2021
+        ]
+      ],
+      "blocks": [
+        "block_a_russian_non_gas",
+        "block_b_russian_gas",
+        "block_c_world_total_gas"
+      ],
+      "verified_zero_rule": {
+        "requires_retry_succeeded_1": true,
+        "requires_hs_report_confirmed_1": true,
+        "absent_row_is_zero": false
+      }
+    },
+    "D2_mirror_flow_recovery": {
+      "enabled_for": "gas_only",
+      "importer_reported_precedence": true,
+      "exporter_mirror_side": "RUS_reporter",
+      "exporter_has_lng": true,
+      "exporter_has_pipeline_gas": false,
+      "unresolved_pipeline_countries": [
+        "AUT",
+        "DEU",
+        "POL",
+        "TUR"
+      ]
+    },
+    "D3_gas_share_denominator": {
+      "default_denominator": "importer_reported_total_gas",
+      "substitute_with": "exporter_sum_total",
+      "substitute_when": [
+        "importer_total_missing",
+        "importer_total_non_positive_with_positive_russian_flow",
+        "importer_total_smaller_than_mirror_numerator"
+      ],
+      "retain_condition": "0 <= russian_numerator <= world_total"
+    },
+    "D4_within_window_completion": {
+      "interpolation_space": "log1p",
+      "internal_gap_max_consecutive": 2,
+      "edge_extrapolation_min_anchors": 3,
+      "edge_growth_statistic": "median_adjacent_growth",
+      "edge_growth_bounds": [
+        0.05,
+        0.95
+      ],
+      "non_negativity_constraint": true,
+      "cross_window_gap": "2013_to_2018_never_bridged",
+      "cross_country_borrowing": false,
+      "ratio_recomputed_from_components": true,
+      "primitive_imputations": {
+        "russian_gas": 13,
+        "world_gas": 13,
+        "russian_non_gas": 11
+      },
+      "never_impute_russian_gas_for": [
+        "AUT",
+        "DEU",
+        "POL",
+        "TUR"
+      ]
+    },
+    "D5_exposure_sample_rules": {
+      "strict": {
+        "min_usable_years_of_4": 3,
+        "max_imputed_per_component": 1
+      },
+      "extended": {
+        "min_usable_years_of_4": 2,
+        "max_imputed_per_component": 2
+      },
+      "excluded_under_both": [
+        "AUT",
+        "DEU",
+        "POL",
+        "TUR"
+      ],
+      "intersection_with_universe": 126,
+      "regression_counts": {
+        "2018_2021_strict": 118,
+        "2018_2021_extended": 119,
+        "2010_2013_strict": 119,
+        "2010_2013_extended": 120
+      },
+      "standardization": "within_sample_mean_zero_unit_variance"
+    },
+    "E1_high_income_design": {
+      "restriction_scalar": "median",
+      "scalar_computed_over": "log_real_GDPpc_2009_2013",
+      "applied_to_targets_and_donors": true,
+      "expected_targets": 38,
+      "expected_donors": 25,
+      "max_abs_std_diff_reported": 1.175
+    },
+    "E2_mahalanobis_matching": {
+      "M_neighbors": 5,
+      "distance_metric": "mahalanobis",
+      "covariate_source": "pre_2014_characteristics",
+      "weighting": "selection_frequency",
+      "expected_targets": 42,
+      "expected_unique_donors": 37,
+      "max_abs_std_diff_reported": 1.052
+    },
+    "E3_standardized_difference_balance": {
+      "formula": "std_diff_j = (mean_j(treated) - mean_j(donor)) / sqrt((sd_j(treated)^2 + sd_j(donor)^2) / 2)",
+      "covariate_window": "2009-2013",
+      "reporting_metric": "max_abs_std_diff_across_all_covariates",
+      "target_baseline": 1.498,
+      "target_high_income": 1.175,
+      "target_mahalanobis": 1.052
+    },
+    "F1_treated_LOO": {
+      "deletes": "one_target_per_iteration",
+      "recomputes": "arithmetic_mean_of_contrasts",
+      "reports": [
+        "min",
+        "max"
+      ],
+      "range_CPI_reported": [
+        0.07,
+        0.074
+      ],
+      "range_GDPpc_reported": [
+        0.023,
+        0.028
+      ]
+    },
+    "F1b_distributional_diagnostics": {
+      "inputs": [
+        "country_level_contrasts_d_i"
+      ],
+      "statistics": {
+        "positive_share": "count(d_i > 0) / N_T",
+        "median": "sample_median_of_d_i",
+        "trimmed_mean_10pct": "mean of d_i after removing the smallest 10% and largest 10% of the N_T country-level contrasts"
+      },
+      "targets_CPI": {
+        "positive_share": 0.976,
+        "median": 0.062,
+        "trimmed_mean_10pct": 0.071
+      },
+      "targets_GDPpc": {
+        "positive_share": 0.667,
+        "median": 0.026,
+        "trimmed_mean_10pct": 0.025
+      }
+    },
+    "F2_donor_LOO": {
+      "deletes": "one_donor_per_iteration",
+      "rebuilds": "donor_factor_from_scratch",
+      "re_estimates": "entire_design",
+      "reports": "top_10_by_absolute_change",
+      "max_change_CPI_reported": 0.0049,
+      "max_change_GDPpc_reported": 0.0019
+    },
+    "F3_donor_pool_variants": {
+      "variants": {
+        "corrected_full_pool": {
+          "n_donors_sanctions": 84,
+          "n_donors_arming": 96
+        },
+        "no_repaired_main_outcome_cells": {
+          "n_donors_sanctions": 80,
+          "n_donors_arming": 92
+        },
+        "high_income_donors": {
+          "n_donors_sanctions": 15,
+          "n_donors_arming": 26
+        }
+      },
+      "reported_ranges": {
+        "CPI": [
+          0.068,
+          0.106
+        ],
+        "GDPpc": [
+          0.025,
+          0.026
+        ]
+      }
+    },
+    "F4_factor_proxy_variants": {
+      "variants": [
+        "own_outcome_donor_mean",
+        "other_outcome_donor_mean",
+        "both_outcome_means",
+        "own_outcome_plus_oil_rents",
+        "own_outcome_plus_fuel_share_balance"
+      ],
+      "dimensions_by_variant": [
+        2,
+        2,
+        3,
+        3,
+        3
+      ],
+      "condition_numbers_sanctions_CPI": [
+        91.47,
+        637.31,
+        4409.35,
+        147.99,
+        650.05
+      ],
+      "reported_ranges": {
+        "CPI": [
+          0.072,
+          0.103
+        ],
+        "GDPpc": [
+          0.007,
+          0.099
+        ]
+      },
+      "stability_flagging_rule": "Any factor proxy specification with condition number > 1000 must be flagged as numerically unstable in downstream reporting; its ATT is a diagnostic not an alternative estimate."
+    },
+    "F5_reference_window_sweep": {
+      "reference_windows": [
+        [
+          2019,
+          2021
+        ],
+        [
+          2017,
+          2019
+        ],
+        [
+          2021,
+          2021
+        ],
+        [
+          2017,
+          2021
+        ],
+        [
+          2018,
+          2021
+        ]
+      ],
+      "Wave2_held_fixed": [
+        2022,
+        2024
+      ],
+      "reported_CPI_values": [
+        0.072,
+        0.07,
+        0.071,
+        0.071,
+        0.072
+      ],
+      "reported_GDPpc_values": [
+        0.025,
+        0.053,
+        -0.001,
+        0.039,
+        0.032
+      ]
+    },
+    "G1_exposure_heterogeneity_matrix": {
+      "specifications": [
+        "baseline_2018_2021",
+        "pre_Crimea_2010_2013",
+        "extended_pre_Crimea_sample",
+        "two_way_fixed_effects",
+        "strict_direct_arming_definition",
+        "alternative_exposure_gas_share"
+      ],
+      "strict_arming_sanctioner_count": 26,
+      "gas_share_variable": "GasShare_iw"
+    },
+    "H1_exact_computational_form": {
+      "pseudo_inverse_operator": "Moore_Penrose",
+      "used_for": [
+        "residual_maker",
+        "beta_estimator",
+        "Lambda_estimator",
+        "gamma_estimator"
+      ],
+      "uses_all_eight_controls": true,
+      "uses_two_factor_components": true
+    },
+    "I1_pointwise_ribbon_figure2": {
+      "per_year_construction": "at each available t in {2001, ..., 2024}: se_t = sd_i(g_hat_it) / sqrt(N_T); ribbon_t = (mean_i(g_hat_it) - 1.96*se_t, mean_i(g_hat_it) + 1.96*se_t); fitted year 2000 is unavailable under the lagged grid",
+      "CI_level": 0.95,
+      "normalization_year": 2013,
+      "normalization_rule": "subtract gap at 2013 from all years",
+      "effective_plot_window": [
+        2001,
+        2024
+      ],
+      "unavailable_years": [
+        2000
+      ]
+    }
+  },
+  "model_parameters": {
+    "CCEDID_model": {
+      "structure": "interactive_factors_plus_common_controls_plus_idiosyncratic",
+      "factor_proxy": "parsimonious_own_outcome_only",
+      "common_control_slope": "pooled_across_S_Y",
+      "loadings": "country_specific",
+      "estimation_timing": "pre_treatment_only",
+      "simulation": "post_treatment_from_pre_only_relationships",
+      "design_restrictions": {
+        "no_post_2013_target_realization_in_own_counterfactual": true,
+        "no_post_2013_target_covariates_used": true,
+        "no_treatment_information_used": true
+      },
+      "identification_conditions": [
+        "donor_factor_captures_relevant_common_shocks",
+        "pre_2014_relationships_informative_after_2013",
+        "no_spillover_or_anticipation"
+      ],
+      "heterogeneous_loadings_on_common_factors": true,
+      "refit_per_policy_outcome_pair": true
+    },
+    "factor_proxy_model": {
+      "dimension": 2,
+      "components": [
+        "constant_one",
+        "donor_outcome_cross_sectional_average"
+      ],
+      "source_of_time_variation": "donor_pool_alone",
+      "target_pool_excluded_from_construction": true,
+      "richer_CCE_proxies_discounted_for": [
+        "endogeneity",
+        "collinearity"
+      ],
+      "pre_treatment_length_constraint": 13
+    },
+    "exposure_heterogeneity_model": {
+      "estimator": "interaction_regression",
+      "controls_included": false,
+      "omitted_period": "all_years_before_2022",
+      "country_specific_loadings_on_Ybar": true,
+      "standard_error": "country_clustered",
+      "interpretation_not_mediation": true,
+      "regression_universe": 126,
+      "intersection_with_exposure_sample": true,
+      "rate_outcome_unit_convention": "percentage_points (do NOT multiply by 100; rate outcomes reported in this regression are already in percentage-point units, in contrast to the ATT tables where rates are expressed as decimals)"
+    }
+  },
+  "methodology_parameters": {
+    "two_wave_imputation": {
+      "waves": [
+        [
+          2014,
+          2021
+        ],
+        [
+          2022,
+          2024
+        ]
+      ],
+      "pre_treatment_estimation_window": [
+        2001,
+        2013
+      ],
+      "incremental_estimand": true,
+      "successive_treatment_regimes_handled": true,
+      "stable_gap_assumption": true,
+      "reported_objects": [
+        "ATT_W1",
+        "ATT_W2",
+        "ATT_Inc_2"
+      ]
+    },
+    "common_correlated_effects": {
+      "origin": "Pesaran_2006",
+      "parsimony_vs_Brown_2026": "own_outcome_CSA_only",
+      "adjustment_for_collinearity": "13_year_window",
+      "adjustment_for_endogeneity": "exclude_target_pool_from_proxy"
+    },
+    "difference_in_differences_adjacent": {
+      "family": "imputation_and_interactive_factor",
+      "related_to": [
+        "Borusyak_2024",
+        "Xu_2017"
+      ],
+      "conventional_2x2": false,
+      "group_time_DiD": false,
+      "two_way_fixed_effects": false,
+      "no_unadjusted_parallel_trends_requirement": true
+    },
+    "placebo_inference": {
+      "size_matched": true,
+      "false_coalition_size": "N_T",
+      "draws_from": "donor_pool_only",
+      "tail_probability_only": true,
+      "not_a_confidence_interval": true,
+      "not_star_source": true
+    },
+    "bootstrap_inference": {
+      "types": [
+        "country_history",
+        "region_block"
+      ],
+      "cluster_levels": [
+        "country",
+        "region"
+      ],
+      "replicates": 500,
+      "seed": null,
+      "reports_percentile_CI": true,
+      "does_not_determine_stars": true,
+      "invalid_resample_policy": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws."
+    }
+  },
+  "network_architecture_parameters": {
+    "paper_uses_neural_networks": false,
+    "paper_uses_LLMs": false,
+    "paper_uses_deep_learning": false,
+    "paper_uses_gradient_descent": false,
+    "CCEDID_statistical_architecture": {
+      "type": "feed_forward_statistical_pipeline",
+      "n_stages": 5,
+      "input_tensor_shapes": {
+        "outcomes": [
+          129,
+          25,
+          4
+        ],
+        "controls_lagged": [
+          129,
+          24,
+          8
+        ],
+        "policy": [
+          129,
+          25,
+          2
+        ]
+      },
+      "outcome_dimension": 4,
+      "control_dimension": 8,
+      "factor_proxy_dimension": 2,
+      "output_object": "country_year_gap_scalar_per_target_per_year",
+      "no_gradient_updates": true,
+      "estimation_via_OLS": true,
+      "no_activation_functions": true,
+      "no_layers": true,
+      "no_backpropagation": true
+    },
+    "inference_architecture": {
+      "type": "parallel_three_branch_diagnostic",
+      "branches": [
+        "country_history_bootstrap",
+        "region_block_bootstrap",
+        "size_matched_placebo"
+      ],
+      "n_replicates_per_branch": 500
+    },
+    "exposure_construction_architecture": {
+      "type": "sequential_five_stage_pipeline",
+      "stages": [
+        "comtrade_query",
+        "mirror_flow_recovery",
+        "gas_share_denominator",
+        "within_window_completion",
+        "strict_extended_sample_rule"
+      ],
+      "cross_window_leakage": false
+    }
+  },
+  "network_training_parameters": {
+    "paper_uses_training": false,
+    "loss_function": null,
+    "optimizer": null,
+    "learning_rate": null,
+    "epochs": null,
+    "batch_size": null,
+    "weight_decay": null,
+    "dropout": null,
+    "warmup": null,
+    "lr_schedule": null,
+    "gradient_clipping": null,
+    "train_validation_split": null,
+    "statistical_estimation_analogues": {
+      "objective_function": "residual_sum_of_squares_minimization",
+      "solution_method": "closed_form_OLS_and_orthogonal_projections",
+      "solve_algorithm": "linear_solve_or_pseudo_inverse",
+      "convergence_iterations": 1,
+      "tolerance": "closed_form_no_iteration",
+      "regularization": "none",
+      "cross_validation": "none",
+      "n_estimate_steps": 3,
+      "estimated_objects_per_run": [
+        "beta_hat_8",
+        "alpha_hat_i_2",
+        "Lambda_hat_i_2x8"
+      ]
+    }
+  },
+  "llm_auxiliary_configuration": {
+    "paper_uses_llm": false,
+    "paper_publishes_prompts": false,
+    "paper_provides_api_keys": false,
+    "paper_names_model_providers": false,
+    "DO_NOT_USE_FOR_FIDELITY_REPRODUCTION": true,
+    "api_keys": {
+      "OPENAI_API_KEY": null,
+      "ANTHROPIC_API_KEY": null,
+      "GOOGLE_API_KEY": null,
+      "HUGGINGFACE_TOKEN": null
+    },
+    "model_names": {
+      "primary_llm": null,
+      "fallback_llm": null,
+      "embedding_model": null
+    },
+    "llm_settings": {
+      "temperature": null,
+      "top_p": null,
+      "max_tokens": null,
+      "frequency_penalty": null,
+      "presence_penalty": null,
+      "seed": null,
+      "response_format": null
+    }
+  },
+  "plot_construction_parameters": {
+    "figure_2_dynamic_CCEDID_gaps": {
+      "source": "Section 5.1.1",
+      "panels": [
+        "log_CPI",
+        "log_real_GDPpc"
+      ],
+      "x_axis": "calendar_year",
+      "y_axis": "yearly_average_imputed_gap",
+      "normalization_year": 2013,
+      "normalization_value": 0,
+      "pointwise_CI_reported": true,
+      "CI_level": 0.95,
+      "CI_basis": "cross_country_dispersion",
+      "CI_construction_algorithm": "I1_pointwise_ribbon_figure2",
+      "shading": {
+        "Wave1": [
+          2014,
+          2021
+        ],
+        "Wave2": [
+          2022,
+          2024
+        ]
+      },
+      "vertical_lines": [
+        2014,
+        2022
+      ],
+      "notes_required": "Values before 2013 are normalized fitted gaps, not treatment leads.",
+      "do_not_interpret_2022_height_as_Table_3_ATT": true,
+      "indexing_convention": "calendar_year_not_event_time",
+      "effective_plot_window": [
+        2001,
+        2024
+      ],
+      "unavailable_years": [
+        2000
+      ]
+    },
+    "figure_3_european_heterogeneity": {
+      "source": "Section 5.1.3",
+      "panels": [
+        "log_CPI",
+        "log_real_GDPpc"
+      ],
+      "geographic_scope": "Europe",
+      "metric": "country_specific_2022_2024_minus_2019_2021_gap",
+      "colour_scale_range": [
+        -0.18,
+        0.18
+      ],
+      "colour_scale_units": "log_points",
+      "grey_rule": "outside_target_group_or_no_estimate",
+      "basemap_source": "UNSPECIFIED IN MANUSCRIPT",
+      "notes_required": "Colour scale extends to +/-0.18 so CPI estimates around 0.17-0.18 are not silently capped."
+    },
+    "figure_4_matched_design_paths": {
+      "source": "Section 6.3",
+      "panels": [
+        "log_CPI",
+        "log_real_GDPpc"
+      ],
+      "path_types": [
+        "baseline_with_band",
+        "high_income_design",
+        "mahalanobis_M5"
+      ],
+      "normalization_year": 2013,
+      "band_style": "pointwise_confidence",
+      "band_applied_to": "baseline_only",
+      "non_baseline_paths_style": "lines_no_band",
+      "indexing_convention": "calendar_year_not_event_time",
+      "notes_required": "Baseline path includes pointwise band; high-income and Mahalanobis paths shown as lines to avoid visual clutter."
+    },
+    "figure_B1_worldwide_heterogeneity": {
+      "source": "Appendix; cross-referenced from Section 5.1.3",
+      "geographic_scope": "world",
+      "metric": "incremental_wave2_country_gap",
+      "colour_scale_range": [
+        -0.18,
+        0.18
+      ],
+      "basemap_source": "UNSPECIFIED IN MANUSCRIPT",
+      "implementation_status": "implemented_requires_authoritative_world_geometry"
+    },
+    "figure_B2_placebo_distributions": {
+      "source": "Appendix B.2",
+      "type": "histogram",
+      "bins": 50,
+      "red_line": "observed_preferred_incremental_ATT",
+      "dotted_line": "zero",
+      "n_replicate_assignments": 500,
+      "panels": [
+        "sanctions_log_CPI",
+        "direct_arming_log_CPI"
+      ]
+    },
+    "figure_B3_reference_windows": {
+      "source": "Section 6.2, footnote 14",
+      "type": "coefficient_plot_across_references",
+      "reference_windows": [
+        [
+          2019,
+          2021
+        ],
+        [
+          2017,
+          2019
+        ],
+        [
+          2021,
+          2021
+        ],
+        [
+          2017,
+          2021
+        ],
+        [
+          2018,
+          2021
+        ]
+      ]
+    },
+    "global_plot_conventions": {
+      "font_family": "serif",
+      "colour_palette": "red_diverging_for_positive_blue_diverging_for_negative",
+      "frame": "fbox",
+      "figure_reference_naming": "arabic_for_main_letters_for_appendix"
+    }
+  },
+  "reproducibility_gaps": {
+    "wdi_vintage": {
+      "status": "UNSPECIFIED IN MANUSCRIPT",
+      "consumed_by": [
+        "Eq3",
+        "Eq5",
+        "Eq6",
+        "Eq8",
+        "Algs_C1",
+        "Algs_C2",
+        "Algs_C3",
+        "Algs_A1"
+      ],
+      "effect": "single_revision_can_shift_eligibility_mask_and_all_numbers",
+      "detection_rule": "Fail the pipeline if the 129-country retained set, or the raw missing-cell counts, deviate from the manuscript's targets.",
+      "action_required": "recover_or_re-derive_and_document",
+      "state": "unresolved",
+      "nonblocking": false,
+      "resolution_artifact": null,
+      "extraction_vintage": null
+    },
+    "comtrade_hs_codes": {
+      "status": "UNSPECIFIED IN MANUSCRIPT",
+      "default_implementation": {
+        "Coal": [
+          "2701"
+        ],
+        "Crude oil": [
+          "2709"
+        ],
+        "Refined petroleum": [
+          "2710"
+        ],
+        "LNG": [
+          "271111"
+        ],
+        "Pipeline gas": [
+          "271121"
+        ]
+      },
+      "consumed_by": [
+        "Eq17",
+        "EqA1",
+        "EqA2",
+        "Algs_D1",
+        "Algs_D2",
+        "Algs_D3",
+        "Algs_D4"
+      ],
+      "action_required": "register_selected_codes_in_audit_ledger",
+      "state": "documented",
+      "nonblocking": false,
+      "resolution_artifact": "records/evidence/study_configuration_choices.json#/comtrade_hs_codes",
+      "selected_implementation": {
+        "Coal": [
+          "2701"
+        ],
+        "Crude oil": [
+          "2709"
+        ],
+        "Refined petroleum": [
+          "2710"
+        ],
+        "LNG": [
+          "271111"
+        ],
+        "Pipeline gas": [
+          "271121"
+        ]
+      },
+      "classification": "HS",
+      "classification_revision": null
+    },
+    "random_seeds": {
+      "country_history_bootstrap": null,
+      "region_block_bootstrap": null,
+      "size_matched_placebo": null,
+      "consumed_by": [
+        "Alg_B1",
+        "Alg_B2",
+        "Alg_B3",
+        "Tables_5",
+        "Tables_B1"
+      ],
+      "action_required": "choose_and_document_and_report_draw_stability",
+      "state": "documented",
+      "nonblocking": false,
+      "resolution_artifact": "records/evidence/study_configuration_choices.json#/random_seeds",
+      "primary_reproduction_v1": {
+        "master": 20261002,
+        "generator": "PCG64",
+        "derivation": "numpy.random.SeedSequence(master).spawn(3)",
+        "branches": {
+          "country_history": {
+            "seed_id": "primary_reproduction_v1:country_history",
+            "spawn_key": [
+              0
+            ]
+          },
+          "region_block": {
+            "seed_id": "primary_reproduction_v1:region_block",
+            "spawn_key": [
+              1
+            ]
+          },
+          "placebo": {
+            "seed_id": "primary_reproduction_v1:placebo",
+            "spawn_key": [
+              2
+            ]
+          }
+        },
+        "origin": "documented_reproduction_choice_not_manuscript_seed"
+      },
+      "stability_reproduction_v1": {
+        "master": 20261003,
+        "generator": "PCG64",
+        "derivation": "numpy.random.SeedSequence(master).spawn(3)",
+        "branches": {
+          "country_history": {
+            "seed_id": "stability_reproduction_v1:country_history",
+            "spawn_key": [
+              0
+            ]
+          },
+          "region_block": {
+            "seed_id": "stability_reproduction_v1:region_block",
+            "spawn_key": [
+              1
+            ]
+          },
+          "placebo": {
+            "seed_id": "stability_reproduction_v1:placebo",
+            "spawn_key": [
+              2
+            ]
+          }
+        },
+        "origin": "documented_reproduction_choice_not_manuscript_seed"
+      }
+    },
+    "equations_B10_to_B13": {
+      "status": "referenced_but_not_typeset",
+      "reconstruction": "see_study_config.equation_parameters.eqB10_to_B13_reconstruction",
+      "action_required": "reconstruct_from_Eqs_12_to_15_and_verify_identity",
+      "state": "documented",
+      "nonblocking": false,
+      "resolution_artifact": "records/evidence/study_configuration_choices.json#/equations_B10_to_B13",
+      "affected_output": [
+        "window ATT",
+        "late-Wave-1 baseline",
+        "incremental Wave-2 ATT"
+      ]
+    },
+    "WGI_release_year": {
+      "status": "UNSPECIFIED IN MANUSCRIPT",
+      "action_required": "recover_the_release_used_for_129_missing_cells",
+      "state": "unresolved",
+      "nonblocking": false,
+      "resolution_artifact": null,
+      "source_release": null,
+      "affected_output": [
+        "raw WGI missingness",
+        "RuleOfLaw completion",
+        "lagged control estimates"
+      ]
+    },
+    "policy_source_archive_paths": {
+      "status": "not_provided",
+      "action_required": "archived_source_field_in_ledger_must_be_populated",
+      "state": "unresolved",
+      "nonblocking": false,
+      "resolution_artifact": null,
+      "affected_output": [
+        "policy ledger",
+        "entry-year decisions",
+        "policy target/donor partitions"
+      ],
+      "archive_root": null
+    },
+    "region_block_definition": {
+      "status": "UNSPECIFIED IN MANUSCRIPT",
+      "default_assumption": "seven_canonical_world_bank_regions",
+      "action_required": "confirm_region_list_used_by_authors",
+      "state": "documented",
+      "nonblocking": false,
+      "resolution_artifact": "records/evidence/study_configuration_choices.json#/region_block_definition",
+      "selected_regions": [
+        "East Asia & Pacific",
+        "Europe & Central Asia",
+        "Latin America & Caribbean",
+        "Middle East & North Africa",
+        "North America",
+        "South Asia",
+        "Sub-Saharan Africa"
+      ],
+      "affected_output": [
+        "region-block bootstrap estimates",
+        "region-bootstrap intervals"
+      ]
+    }
+  },
+  "methodological_notes": {
+    "estimand_interpretation": "The ATT is the equally weighted average counterfactual gap among the countries in the estimation target group. Countries receive equal weight regardless of population or economic size.",
+    "incremental_vs_level_estimand": "Wave-2 level ATT is a total post-2022 gap vs non-participation. The preferred incremental contrast subtracts each country's 2019-2021 mean gap from its 2022-2024 mean gap.",
+    "coefficient_ordering_property": "The incremental post-2022 CPI effect (0.072) exceeds the Wave-2 level ATT (0.022) because the coalition entered 2022 from a negative Wave-1 position. The incremental captures the upward trajectory from that starting point; the level ATT measures final standing relative to the zero-deviation baseline.",
+    "stable_gap_assumption_content": "Inherited baseline (2019-2021) can be nonzero; no further post-2021 drift in that inherited baseline or in the mean counterfactual prediction error.",
+    "causal_interpretation_conditions": [
+      "Donor factor captures common shocks relevant to coalition members",
+      "Pre-2014 relationships remain informative after 2013",
+      "Timing, anticipation, and spillover conditions hold"
+    ],
+    "three_interface_invariants": [
+      "No target-country post-2013 realization enters its own counterfactual",
+      "No treatment information enters eligibility or imputation rules",
+      "Robustness branches never replace the baseline estimate"
+    ],
+    "log_point_percentage_convention": "Exact percentage = 100*(exp(theta_hat)-1); small-effect approximation = 100*theta_hat.",
+    "stars_source_rule": "Main-table significance stars come from the country-dispersion SE. Bootstrap and placebo outputs are complementary diagnostics only.",
+    "cost_bundle_interpretation": "Estimates capture realized path of coalition members under the 2022 bundle (legal sanctions + supply cuts + reallocation + compensation), not the ceteris-paribus effect of any single legal instrument.",
+    "not_a_success_or_failure_verdict": "Evidence of sender costs does not establish that sanctions failed or reduced welfare. Full assessment would require evidence on costs to Russia and strategic benefits of coalition participation, neither of which is estimated.",
+    "exposure_gradient_not_mediation": "The exposure regressions identify conditional associations within the coalition. They do not constitute a formal mediation analysis.",
+    "no_household_incidence_estimated": "The paper does not estimate household or firm incidence of the price increase; only national aggregates.",
+    "no_replication_archive": "The arXiv submission contains manuscript and figure files only. No replication archive is provided."
+  },
+  "data_preprocessing_parameters": {
+    "eligibility_evaluation": {
+      "on_raw_values": true,
+      "before_completion": true,
+      "without_policy_information": true,
+      "without_estimated_effects": true,
+      "temporal_universe_whole_period": [
+        2000,
+        2024
+      ],
+      "temporal_universe_critical_window": [
+        2019,
+        2024
+      ]
+    },
+    "control_completion_hierarchy": {
+      "priority_order": [
+        "internal_linear_interpolation",
+        "trailing_last_observation",
+        "leading_first_observation_leq_3_years",
+        "local_linear_trend_backcast"
+      ],
+      "trend_anchor_count": 5,
+      "trend_bounds_sigma": 1.0,
+      "non_negativity_vars": [
+        "TradeOpenness",
+        "Investment",
+        "GovConsumption"
+      ],
+      "cross_country_information": false,
+      "temporal_universe_anchoring": [
+        1996,
+        2024
+      ],
+      "non_negativity_column_bindings": {
+        "TradeOpenness": "TradeOpenness",
+        "Investment": "InvestmentRate",
+        "GovConsumption": "GovConsumption"
+      }
+    },
+    "outcome_repair": {
+      "internal_interpolation": false,
+      "leading_backcast_count": 55,
+      "carry_forward_count": 2,
+      "cross_country_information": false
+    },
+    "label_transformation": {
+      "log_outcomes": [
+        "CPI",
+        "RealGDPpc"
+      ],
+      "rate_outcomes_divided_by_100_in_ATT": [
+        "Inflation",
+        "RealGDPpcGrowth"
+      ],
+      "rate_outcomes_percentage_points_in_mechanism": [
+        "Inflation",
+        "RealGDPpcGrowth"
+      ],
+      "within_country_only_outcomes": [
+        "CPI"
+      ]
+    },
+    "control_lag_rule": {
+      "lagged_by": 1,
+      "lagged_after_completion": true,
+      "effective_window_after_lag": [
+        2001,
+        2024
+      ]
+    },
+    "fuel_share_balance_construction": {
+      "formula": "FuelShareBalance_it = FuelImportShare_it - FuelExportShare_it",
+      "primitive_series": [
+        "TM.VAL.FUEL.ZS.UN",
+        "TX.VAL.FUEL.ZS.UN"
+      ],
+      "completion_order": "complete_primitives_first_then_subtract",
+      "inherits_repair_flags_union": true,
+      "units": "percentage_points"
+    },
+    "exposure_preprocessing": {
+      "ratio_recomputed_from_components": true,
+      "cross_window_imputation": false,
+      "interpolation_space": "log1p",
+      "non_negativity_constraint": true,
+      "standardization": "within_regression_sample",
+      "specific_pipeline_country_exclusions": [
+        "AUT",
+        "DEU",
+        "POL",
+        "TUR"
+      ],
+      "specific_mechanism_universe_exclusions": [
+        "RUS",
+        "BLR",
+        "UKR"
+      ]
+    }
+  },
+  "series_code_registry": {
+    "wdi_outcomes": {
+      "CPI": {
+        "indicator_code": "FP.CPI.TOTL",
+        "role": "outcome",
+        "transformation": "natural_log_after_completion",
+        "unit_of_interpretation": "within_country_index"
+      },
+      "RealGDPpc": {
+        "indicator_code": "NY.GDP.PCAP.KD",
+        "role": "outcome",
+        "transformation": "natural_log_after_completion",
+        "unit_of_interpretation": "constant_price"
+      },
+      "InflationRate": {
+        "indicator_code": "FP.CPI.TOTL.ZG",
+        "role": "outcome",
+        "transformation": "divided_by_100_for_ATT_percentage_points_for_mechanism"
+      },
+      "RealGDPpcGrowth": {
+        "indicator_code": "NY.GDP.PCAP.KD.ZG",
+        "role": "outcome",
+        "transformation": "divided_by_100_for_ATT_percentage_points_for_mechanism"
+      }
+    },
+    "wdi_controls": {
+      "OilRents": {
+        "indicator_code": "NY.GDP.PETR.RT.ZS",
+        "role": "control",
+        "transformation": "level"
+      },
+      "TradeOpenness": {
+        "indicator_code": "NE.TRD.GNFS.ZS",
+        "role": "control",
+        "transformation": "level",
+        "non_negativity_floor": true
+      },
+      "TermsOfTrade": {
+        "indicator_code": "TT.PRI.MRCH.XD.WD",
+        "role": "control",
+        "transformation": "level"
+      },
+      "InvestmentRate": {
+        "indicator_code": "NE.GDI.TOTL.ZS",
+        "role": "control",
+        "transformation": "level",
+        "non_negativity_floor": true
+      },
+      "GovConsumption": {
+        "indicator_code": "NE.CON.GOVT.ZS",
+        "role": "control",
+        "transformation": "level",
+        "non_negativity_floor": true
+      },
+      "PopulationGrowth": {
+        "indicator_code": "SP.POP.GROW",
+        "role": "control",
+        "transformation": "level"
+      },
+      "FuelImportShare": {
+        "indicator_code": "TM.VAL.FUEL.ZS.UN",
+        "role": "control_primitive",
+        "transformation": "level"
+      },
+      "FuelExportShare": {
+        "indicator_code": "TX.VAL.FUEL.ZS.UN",
+        "role": "control_primitive",
+        "transformation": "level"
+      }
+    },
+    "wgi_controls": {
+      "RuleOfLaw": {
+        "indicator_code": "WGI_rule_of_law",
+        "source_system": "Worldwide Governance Indicators",
+        "role": "control",
+        "transformation": "level",
+        "winsorizing_applied": false
+      }
+    },
+    "nominal_gdp": {
+      "NominalGDP": {
+        "indicator_code": "NY.GDP.MKTP.CD",
+        "source_system": "World Development Indicators",
+        "role": "exposure_denominator",
+        "transformation": "current_USD_unchanged"
+      }
+    },
+    "temporal_universe_by_layer": {
+      "raw_retrieval": [
+        1996,
+        2024
+      ],
+      "eligibility_screening": [
+        2000,
+        2024
+      ],
+      "completion_anchoring": [
+        1996,
+        2024
+      ],
+      "completion_output": [
+        2000,
+        2024
+      ],
+      "balanced_panel": [
+        2000,
+        2024
+      ],
+      "effective_estimation_after_lag": [
+        2001,
+        2024
+      ],
+      "pre_treatment_fit": [
+        2001,
+        2013
+      ],
+      "post_treatment_projection": [
+        2014,
+        2024
+      ],
+      "exposure_windows": [
+        [
+          2010,
+          2013
+        ],
+        [
+          2018,
+          2021
+        ]
+      ]
+    }
+  },
+  "country_validation_registries": {
+    "sanctions_target_42": [
+      "ALB",
+      "AUS",
+      "AUT",
+      "BEL",
+      "BIH",
+      "BGR",
+      "CAN",
+      "HRV",
+      "CYP",
+      "CZE",
+      "DNK",
+      "EST",
+      "FIN",
+      "FRA",
+      "DEU",
+      "GRC",
+      "HUN",
+      "ISL",
+      "IRL",
+      "ITA",
+      "JPN",
+      "KOR",
+      "LVA",
+      "LTU",
+      "LUX",
+      "MLT",
+      "MDA",
+      "NLD",
+      "NZL",
+      "MKD",
+      "NOR",
+      "POL",
+      "PRT",
+      "ROU",
+      "SGP",
+      "SVK",
+      "SVN",
+      "ESP",
+      "SWE",
+      "CHE",
+      "GBR",
+      "USA"
+    ],
+    "direct_arming_target_29": [
+      "AUS",
+      "BEL",
+      "BGR",
+      "CAN",
+      "HRV",
+      "CZE",
+      "DNK",
+      "EST",
+      "FIN",
+      "FRA",
+      "DEU",
+      "GRC",
+      "ITA",
+      "LVA",
+      "LTU",
+      "LUX",
+      "NLD",
+      "MKD",
+      "NOR",
+      "POL",
+      "PRT",
+      "ROU",
+      "SVK",
+      "SVN",
+      "ESP",
+      "SWE",
+      "TUR",
+      "GBR",
+      "USA"
+    ],
+    "sanctions_donors_84": [
+      "DZA",
+      "AGO",
+      "ARM",
+      "AZE",
+      "BHS",
+      "BHR",
+      "BGD",
+      "BLZ",
+      "BEN",
+      "BTN",
+      "BOL",
+      "BWA",
+      "BRA",
+      "BRN",
+      "BFA",
+      "KHM",
+      "CMR",
+      "CAF",
+      "CHL",
+      "CHN",
+      "COL",
+      "COM",
+      "COG",
+      "CRI",
+      "CIV",
+      "DOM",
+      "ECU",
+      "EGY",
+      "SLV",
+      "FJI",
+      "GAB",
+      "GMB",
+      "GEO",
+      "GHA",
+      "GTM",
+      "GIN",
+      "HND",
+      "HKG",
+      "IND",
+      "IDN",
+      "IRN",
+      "ISR",
+      "KAZ",
+      "KEN",
+      "KIR",
+      "KWT",
+      "KGZ",
+      "MAC",
+      "MDG",
+      "MYS",
+      "MLI",
+      "MRT",
+      "MUS",
+      "MEX",
+      "MNG",
+      "MAR",
+      "NAM",
+      "NPL",
+      "NIC",
+      "NER",
+      "OMN",
+      "PAK",
+      "PAN",
+      "PRY",
+      "PER",
+      "PHL",
+      "RWA",
+      "SAU",
+      "SEN",
+      "SYC",
+      "SLB",
+      "ZAF",
+      "LKA",
+      "TZA",
+      "THA",
+      "TGO",
+      "TON",
+      "TUN",
+      "TUR",
+      "UGA",
+      "ARE",
+      "URY",
+      "VNM",
+      "PSE"
+    ],
+    "direct_arming_donors_CPI_96": [
+      "ALB",
+      "DZA",
+      "AGO",
+      "ARM",
+      "AUT",
+      "AZE",
+      "BHS",
+      "BHR",
+      "BGD",
+      "BLZ",
+      "BEN",
+      "BTN",
+      "BOL",
+      "BWA",
+      "BRA",
+      "BRN",
+      "BFA",
+      "KHM",
+      "CMR",
+      "CAF",
+      "CHL",
+      "CHN",
+      "COL",
+      "COM",
+      "COG",
+      "CRI",
+      "CIV",
+      "CYP",
+      "DOM",
+      "ECU",
+      "EGY",
+      "SLV",
+      "FJI",
+      "GAB",
+      "GMB",
+      "GEO",
+      "GHA",
+      "GTM",
+      "GIN",
+      "HND",
+      "HKG",
+      "HUN",
+      "ISL",
+      "IND",
+      "IDN",
+      "IRN",
+      "IRL",
+      "ISR",
+      "JPN",
+      "KAZ",
+      "KEN",
+      "KIR",
+      "KOR",
+      "KWT",
+      "KGZ",
+      "MAC",
+      "MDG",
+      "MYS",
+      "MLI",
+      "MLT",
+      "MRT",
+      "MUS",
+      "MEX",
+      "MDA",
+      "MNG",
+      "MAR",
+      "NAM",
+      "NPL",
+      "NZL",
+      "NIC",
+      "NER",
+      "OMN",
+      "PAK",
+      "PAN",
+      "PRY",
+      "PER",
+      "PHL",
+      "RWA",
+      "SAU",
+      "SEN",
+      "SYC",
+      "SGP",
+      "SLB",
+      "ZAF",
+      "LKA",
+      "CHE",
+      "TZA",
+      "THA",
+      "TGO",
+      "TON",
+      "TUN",
+      "UGA",
+      "ARE",
+      "URY",
+      "VNM",
+      "PSE"
+    ],
+    "direct_arming_donors_GDPpc_97": [
+      "ALB",
+      "DZA",
+      "AGO",
+      "ARM",
+      "AUT",
+      "AZE",
+      "BHS",
+      "BHR",
+      "BGD",
+      "BLZ",
+      "BEN",
+      "BTN",
+      "BOL",
+      "BIH",
+      "BWA",
+      "BRA",
+      "BRN",
+      "BFA",
+      "KHM",
+      "CMR",
+      "CAF",
+      "CHL",
+      "CHN",
+      "COL",
+      "COM",
+      "COG",
+      "CRI",
+      "CIV",
+      "CYP",
+      "DOM",
+      "ECU",
+      "EGY",
+      "SLV",
+      "FJI",
+      "GAB",
+      "GMB",
+      "GEO",
+      "GHA",
+      "GTM",
+      "GIN",
+      "HND",
+      "HKG",
+      "HUN",
+      "ISL",
+      "IND",
+      "IDN",
+      "IRN",
+      "IRL",
+      "ISR",
+      "JPN",
+      "KAZ",
+      "KEN",
+      "KIR",
+      "KOR",
+      "KWT",
+      "KGZ",
+      "MAC",
+      "MDG",
+      "MYS",
+      "MLI",
+      "MLT",
+      "MRT",
+      "MUS",
+      "MEX",
+      "MDA",
+      "MNG",
+      "MAR",
+      "NAM",
+      "NPL",
+      "NZL",
+      "NIC",
+      "NER",
+      "OMN",
+      "PAK",
+      "PAN",
+      "PRY",
+      "PER",
+      "PHL",
+      "RWA",
+      "SAU",
+      "SEN",
+      "SYC",
+      "SGP",
+      "SLB",
+      "ZAF",
+      "LKA",
+      "CHE",
+      "TZA",
+      "THA",
+      "TGO",
+      "TON",
+      "TUN",
+      "UGA",
+      "ARE",
+      "URY",
+      "VNM",
+      "PSE"
+    ],
+    "geopolitical_exclusions": {
+      "target_and_donor_ban": [
+        "RUS"
+      ],
+      "donor_ban": [
+        "BLR"
+      ],
+      "target_exclusion_from_ATT": [
+        "UKR"
+      ],
+      "critical_window_exclusion": [
+        "SYR",
+        "SDN"
+      ]
+    },
+    "direct_arming_CPI_donor_additional_exclusion": [
+      "BIH"
+    ]
+  },
+  "pretreatment_means_2009_2013_integrity_targets": {
+    "log_CPI": {
+      "sanctions_targets": 4.633,
+      "sanctions_CPI_donors": 4.662,
+      "direct_arming_targets": 4.635,
+      "direct_arming_CPI_donors": 4.658
+    },
+    "log_real_GDPpc": {
+      "sanctions_targets": 10.061,
+      "sanctions_CPI_donors": 8.184,
+      "direct_arming_targets": 10.084,
+      "direct_arming_CPI_donors": 8.43
+    },
+    "rule_of_law": {
+      "sanctions_targets": 1.029,
+      "sanctions_CPI_donors": -0.361,
+      "direct_arming_targets": 1.0,
+      "direct_arming_CPI_donors": -0.165
+    },
+    "oil_rents": {
+      "sanctions_targets": 0.383,
+      "sanctions_CPI_donors": 5.459,
+      "direct_arming_targets": 0.448,
+      "direct_arming_CPI_donors": 4.808
+    },
+    "tolerance": "0.001",
+    "check_required": true
+  },
+  "estimation_sequencing": {
+    "OUTER_LOOP": "over (policy, outcome) pairs",
+    "policy_values": [
+      "strict_sanctions",
+      "direct_arming"
+    ],
+    "outcome_values": [
+      "log_CPI",
+      "log_real_GDPpc",
+      "inflation_rate",
+      "GDPpc_growth_rate"
+    ],
+    "pairs": 8,
+    "per_pair_refit": [
+      "donor_factor_proxy_for_this_outcome",
+      "beta_hat_8",
+      "alpha_hat_i_2_for_every_unit_in_S_Y",
+      "Lambda_hat_i_2x8_for_every_target"
+    ],
+    "INNER_LOOP": "over reporting windows W1, W2 and reference R",
+    "no_parameter_carryover_across_outcomes": true,
+    "no_parameter_carryover_across_policies": true
+  },
+  "invalid_resample_policy": {
+    "country_history_bootstrap": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws.",
+    "region_block_bootstrap": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws.",
+    "size_matched_placebo": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws.",
+    "uniform_reporting_requirement": "Log each accepted/rejected attempt and discarded_count for every branch. Fragility is discarded_count / attempted_count > 0.10, not discarded_count / requested_count. Preserve deterministic RNG state chains."
+  },
+  "version": "1.1.0",
+  "execution_mode": "production",
+  "estimation": {
+    "windows": {
+      "wave_1_level": [
+        2014,
+        2021
+      ],
+      "wave_2_level": [
+        2022,
+        2024
+      ],
+      "pre_escalation": [
+        2019,
+        2021
+      ],
+      "post_escalation": [
+        2022,
+        2024
+      ]
+    },
+    "preferred_reference_window": [
+      2019,
+      2021
+    ]
+  },
+  "runtime_inputs": {
+    "seeds": {
+      "seed_set_id": "primary_reproduction_v1",
+      "master": 20261002,
+      "branch_spawn_keys": {
+        "country_history": [
+          0
+        ],
+        "region_block": [
+          1
+        ],
+        "placebo": [
+          2
+        ]
+      }
+    },
+    "stability_seeds": {
+      "seed_set_id": "stability_reproduction_v1",
+      "master": 20261003,
+      "branch_spawn_keys": {
+        "country_history": [
+          0
+        ],
+        "region_block": [
+          1
+        ],
+        "placebo": [
+          2
+        ]
+      }
+    },
+    "output_dir": "results",
+    "replication_archive_root": "replication_archive",
+    "overlay_pair": [
+      "strict_sanctions",
+      "log_CPI"
+    ],
+    "archive_version_tag": "v1.1.0-frozen"
+  },
+  "configuration_documentation": {
+    "author": "CS Chirinda",
+    "version": "1.1.0",
+    "status": "operative_contracts_remediated_pending_authentic_provenance_and_independent_authorities",
+    "header": "# ==============================================================================\n#\n#  Two-Wave Common Correlated Effects Imputation for Coalition Burden\n#  Price Levels, Real Output, and Pre-Escalation Russian-Energy Exposure\n#\n#  Complete Study Parameters, Runtime Bindings, and Provenance Requirements\n#\n#  This configuration specifies the analytical and reproducibility parameters\n#  of the Python research pipeline implementing \"Do Sanctions Backfire? New\n#  Evidence on the Macroeconomic Effects of Supporting Ukraine\" by Vicente\n#  Rios, Izaskun Barba, and Lisa Gianmoena (2026). It preserves every parameter\n#  in the supplied revised specification and records identified corrections.\n#  The companion study_config.json encodes exactly the same data mapping.\n#\n#  Core Methodological Components:\n#  - Eligibility is fixed using raw 2000--2024 observations before completion;\n#    treatment assignments and estimated effects do not determine eligibility.\n#  - Audited, within-country deterministic completion precedes construction of\n#    the balanced 129-country panel and its eight one-year-lagged controls.\n#  - Policy/outcome-specific never-treated donor means and a constant provide\n#    the parsimonious two-component common-factor proxy.\n#  - Factor-adjusted pooled coefficients and country-specific loadings are\n#    estimated over 2001--2013. Untreated post-2013 paths use simulated target\n#    covariates and donor factors, excluding realized post-treatment targets.\n#  - Equally weighted level gaps cover 2014--2021 and 2022--2024. The preferred\n#    incremental contrast subtracts each country's 2019--2021 mean gap under\n#    the maintained stable-gap continuation assumption.\n#  - Country-dispersion Student-t inference supplies the main-table stars.\n#    Whole-country and region-block bootstraps re-estimate the design; finite-\n#    draw-corrected, size-matched placebo tail probabilities are diagnostics.\n#  - Russian-energy monetary imports and nominal GDP are aggregated within\n#    2018--2021 and 2010--2013 after primitive-component completion; ratios\n#    are recomputed from components rather than directly interpolated.\n#  - Sample-standardized exposure interactions use country-clustered covariance\n#    and the full covariance contribution for the total coalition gradient.\n#  - Matching, influence, donor, factor, reference-window, and distributional\n#    diagnostics retain separate branches and never replace the baseline.\n#\n#  Technical Specification Features:\n#  - All 19 supplied sections, equation entries, algorithm labels, schemas,\n#    series codes, targets, exclusions, and unresolved provenance slots remain.\n#  - Five country rosters are transcribed from manuscript Tables A4/A6 and\n#    cross-checked for policy overlap, donor membership, and the BIH exception.\n#  - Covariate loadings have shape 2 x 8, consistent with F^+ X_i in Appendix B.\n#  - Explicit reporting-window aliases match the notebook's runtime interface.\n#  - Reproduction seed sets are documented implementation choices; they are\n#    not represented as the authors' undisclosed random seeds.\n#  - Plain YAML/JSON arrays replace Python tuples; no Python-specific YAML tags,\n#    object constructors, secrets, or fabricated data-vintage values are used.\n#  - Parameter annotations and a change ledger distinguish retained values,\n#    manuscript-derived repairs, implementation choices, and unresolved inputs.\n#\n#  Fidelity Anchor:\n#  latex_context.txt: main-text Equations (1)--(18), (A1)--(A2), and the printed\n#  Appendix B tags B1, B3, B4, B5--B6, B7, B8; Tables 1--10, A1--A8, B1--B7.\n#  B2 is absent; referenced B10--B13 are reconstructed from Equations (12)--(15).\n#  A1--I1 algorithm names are implementation registry labels, not numbered\n#  algorithms typeset in the manuscript. Numerical reference targets are\n#  validation comparators, never substitutes for re-estimated results.\n#\n#  Scientific and Execution Status:\n#  Operative bindings are remediated; authentic provenance remains pending.\n#  The production gate must remain blocked until the WDI extraction vintage,\n#  WGI release, and archived policy-source evidence have been supplied and\n#  their concrete resolution artifacts registered. No empirical replication\n#  or causal validity is established by configuration validation alone.\n#  Source frames, geographic data, income groups, table authorities, and pinned\n#  reconciliation inputs remain separate arguments to the pipeline.\n#\n#  Loading Contract:\n#  1. Parse either file as the study_config mapping itself (no wrapper key).\n#  2. Supply that mapping under data['study_config']; supply the ten raw source\n#     DataFrames under data['sources']. The pipeline takes this data mapping.\n#  3. orchestrate_study_pipeline binds runtime_inputs into a copy and rejects\n#     conflicting duplicate declarations. Raw data and independent evidence\n#     remain external inputs; missing provenance never becomes a ready token.\n#  See records/evidence/configuration_remediation_validation.json for evidence.\n#\n#  Paper Reference:\n#  Rios, V., Barba, I., & Gianmoena, L. (2026). Do Sanctions Backfire? New\n#  Evidence on the Macroeconomic Effects of Supporting Ukraine.\n#  E-journal submission: 11 September 2026.\n#  arXiv:2609.12387. https://arxiv.org/abs/2609.12387\n#\n#  Source notebook: do_sanctions_backfire_remediated_draft.ipynb\n#  Python implementation author: CS Chirinda\n#  Configuration version: 1.1.0\n#  Prepared for the project context dated 2 October 2026.\n#\n# ==============================================================================\n",
+    "source_specification": {
+      "path": "study_revised_inputs_20260919_185553.md",
+      "sha256": "ac65e5d70b8d20d776f13002a5aab38a663338edb866a7988dffe9bca036945f",
+      "required_section_count": 19,
+      "original_parameter_count": 930,
+      "original_leaf_parameter_count": 750
+    },
+    "fidelity_sources": {
+      "manuscript": {
+        "path": "latex_context.txt",
+        "sha256": "197da69b9630abfb278c3ac91c206256617b696799ec6899486d463bce9e62c9"
+      },
+      "notebook": {
+        "path": "do_sanctions_backfire_remediated_draft.ipynb",
+        "sha256": "fde2f8ee4ddd2418f976d2eb464572f87eac26a02840985c4c1bdc7d5f964fa6"
+      },
+      "paper_reference_supplied_in_session": "https://arxiv.org/abs/2609.12387"
+    },
+    "parameter_status_default": "All original parameters not listed in corrections are retained exactly, apart from the portable conversion of Python tuples to arrays. Original comments describe the supplied specification, not independent proof of manuscript support. New keys are REVISED additions.",
+    "source_parameter_annotations": {
+      "global_constants.n_policy_outcome_estimator_runs": "REVISED: 2 policies × 4 outcomes",
+      "raw_data_schemas.wdi_raw_wide.vintage": "UNSPECIFIED IN MANUSCRIPT (see Section 12)",
+      "raw_data_schemas.wgi_raw_long.winsorizing_applied": "REVISED: corrects prior description",
+      "raw_data_schemas.comtrade_block_a_raw.candidate_hs_codes": "REVISED: default registry",
+      "raw_data_schemas.comtrade_block_a_raw.mirror_recovery_applicable": "REVISED: gas only",
+      "raw_data_schemas.comtrade_block_b_raw.candidate_hs_codes": "REVISED: default registry",
+      "raw_data_schemas.comtrade_block_b_raw.row_direction_disjunction": "REVISED: resolves C-2",
+      "raw_data_schemas.nominal_gdp_raw.positivity_assertion": "REVISED: enforced at ingest",
+      "raw_data_schemas.country_metadata_raw.region_vocabulary": "REVISED: canonical WB regions",
+      "equation_parameters.eq15_incremental_wave2_ATT.identity_check_required": "REVISED",
+      "equation_parameters.eq18_exposure_heterogeneity.coefficient_semantics": "REVISED: explicit",
+      "equation_parameters.eq18_exposure_heterogeneity.regression_samples.2018_2021_extended": "UNSPECIFIED IN MANUSCRIPT — inferred from Table A8 Panel B",
+      "equation_parameters.eq18_exposure_heterogeneity.regression_samples.2018_2021_extended.N_all": "UNSPECIFIED IN MANUSCRIPT — inferred from Table A8 Panel B",
+      "equation_parameters.eq18_exposure_heterogeneity.regression_samples.2018_2021_extended.N_sanctioners": "UNSPECIFIED IN MANUSCRIPT — inferred from Table A8 Panel B",
+      "equation_parameters.eq18_exposure_heterogeneity.regression_samples.2010_2013_extended": "UNSPECIFIED IN MANUSCRIPT — inferred from Table A8 Panel B",
+      "equation_parameters.eq18_exposure_heterogeneity.regression_samples.2010_2013_extended.N_all": "UNSPECIFIED IN MANUSCRIPT — inferred from Table A8 Panel B",
+      "equation_parameters.eq18_exposure_heterogeneity.regression_samples.2010_2013_extended.N_sanctioners": "UNSPECIFIED IN MANUSCRIPT — inferred from Table A8 Panel B",
+      "equation_parameters.eqB10_to_B13_reconstruction": "REVISED: gap explicitly reconstructed",
+      "algorithm_parameters.B1_country_history_bootstrap.seed": "UNSPECIFIED IN MANUSCRIPT",
+      "algorithm_parameters.B1_country_history_bootstrap.invalid_resample_policy": "REVISED — resolves M-4",
+      "algorithm_parameters.B2_region_block_bootstrap.seed": "UNSPECIFIED IN MANUSCRIPT",
+      "algorithm_parameters.B3_size_matched_placebo.seed": "UNSPECIFIED IN MANUSCRIPT",
+      "algorithm_parameters.C1_eligibility_screening.whole_period_window": "REVISED: explicit",
+      "algorithm_parameters.C2_control_completion.priority_3_applies_to": "REVISED: disambiguates",
+      "algorithm_parameters.G0_treatment_coding_resolution": "REVISED — resolves C-3",
+      "algorithm_parameters.E3_standardized_difference_balance": "REVISED — resolves C-6",
+      "algorithm_parameters.F1b_distributional_diagnostics": "REVISED — resolves C-5",
+      "algorithm_parameters.I1_pointwise_ribbon_figure2": "REVISED — resolves M-8",
+      "model_parameters.CCEDID_model.refit_per_policy_outcome_pair": "REVISED: 8 total fits",
+      "model_parameters.exposure_heterogeneity_model.rate_outcome_unit_convention": "REVISED — resolves C-4",
+      "methodology_parameters.bootstrap_inference.seed": "UNSPECIFIED IN MANUSCRIPT",
+      "methodology_parameters.bootstrap_inference.invalid_resample_policy": "REVISED — resolves M-4",
+      "network_architecture_parameters.CCEDID_statistical_architecture.input_tensor_shapes": "REVISED: precision",
+      "network_training_parameters.statistical_estimation_analogues.solution_method": "REVISED: distinguishes pooled β from loadings",
+      "llm_auxiliary_configuration.DO_NOT_USE_FOR_FIDELITY_REPRODUCTION": "REVISED: prominent warning",
+      "plot_construction_parameters.figure_2_dynamic_CCEDID_gaps.CI_construction_algorithm": "REVISED",
+      "plot_construction_parameters.figure_2_dynamic_CCEDID_gaps.indexing_convention": "REVISED",
+      "plot_construction_parameters.figure_3_european_heterogeneity.basemap_source": "REVISED",
+      "plot_construction_parameters.figure_4_matched_design_paths.indexing_convention": "REVISED",
+      "reproducibility_gaps.random_seeds.country_history_bootstrap": "UNSPECIFIED IN MANUSCRIPT",
+      "reproducibility_gaps.random_seeds.region_block_bootstrap": "UNSPECIFIED IN MANUSCRIPT",
+      "reproducibility_gaps.random_seeds.size_matched_placebo": "UNSPECIFIED IN MANUSCRIPT",
+      "reproducibility_gaps.region_block_definition": "REVISED — new gap",
+      "methodological_notes.coefficient_ordering_property": "REVISED — added",
+      "data_preprocessing_parameters.label_transformation.rate_outcomes_percentage_points_in_mechanism": "REVISED — resolves C-4",
+      "data_preprocessing_parameters.fuel_share_balance_construction": "REVISED — resolves M-1",
+      "series_code_registry.wgi_controls.RuleOfLaw.winsorizing_applied": "REVISED",
+      "country_validation_registries.direct_arming_CPI_donor_additional_exclusion": "REVISED — resolves M-5",
+      "pretreatment_means_2009_2013_integrity_targets.tolerance": "UNSPECIFIED IN MANUSCRIPT — reasonable for a two-decimal target",
+      "estimation_sequencing.no_parameter_carryover_across_outcomes": "REVISED — resolves ambiguity",
+      "estimation_sequencing.no_parameter_carryover_across_policies": "REVISED"
+    },
+    "parameter_annotation_overrides": {
+      "equation_parameters.eq8_covariate_loadings.Lambda_dimension": "REVISED: resolves transposed loadings: F^+ is 2 x 13 and X_i is 13 x 8 Evidence: latex_context.txt, Equation (8) and Appendix B5--B6.",
+      "equation_parameters.eqB10_to_B13_reconstruction.status": "REVISED: resolves the required-field placeholder by declaring the reconstruction Evidence: latex_context.txt, Equations (12)--(15) and Appendix B reference.",
+      "country_validation_registries.sanctions_target_42": "REVISED: resolves empty roster by transcribing the indicated Table A6 column Evidence: latex_context.txt, Table A6; target identities cross-checked with A4.",
+      "country_validation_registries.direct_arming_target_29": "REVISED: resolves empty roster by transcribing the indicated Table A6 column Evidence: latex_context.txt, Table A6; target identities cross-checked with A4.",
+      "country_validation_registries.sanctions_donors_84": "REVISED: resolves empty roster by transcribing the indicated Table A6 column Evidence: latex_context.txt, Table A6; target identities cross-checked with A4.",
+      "country_validation_registries.direct_arming_donors_CPI_96": "REVISED: resolves empty roster by transcribing the indicated Table A6 column Evidence: latex_context.txt, Table A6; target identities cross-checked with A4.",
+      "country_validation_registries.direct_arming_donors_GDPpc_97": "REVISED: resolves empty roster by transcribing the indicated Table A6 column Evidence: latex_context.txt, Table A6; target identities cross-checked with A4.",
+      "reproducibility_gaps.comtrade_hs_codes.classification_revision": "UNSPECIFIED IN MANUSCRIPT: retain null until the raw extraction metadata identifies its HS revision. The listed codes are documented defaults.",
+      "raw_data_schemas.wdi_raw_wide.aggregate_row_exclusion_pattern": "RETAINED: this regex validates code syntax only; WLD, EAP and HIC also match it. Aggregate exclusion must use the notebook's aggregate code registry and frozen country universe.",
+      "raw_data_schemas.wdi_raw_wide.columns": "RETAINED: 1996-2024 is schema shorthand for 29 separate year columns, not a literal DataFrame column name.",
+      "equation_parameters.eq17_exposure_measure.gas_types": "RETAINED: legacy key name covers fossil-energy products, including coal and petroleum; it is not a gas-only numerator.",
+      "equation_parameters.eq15_incremental_wave2_ATT.identity_tolerance": "RETAINED; UNSPECIFIED IN MANUSCRIPT: numerical identity tolerance is an implementation choice, stored as the supplied decimal string.",
+      "algorithm_parameters.C2_control_completion.extrapolation_bound_low": "RETAINED; UNSPECIFIED IN MANUSCRIPT: the text bounds by observed range and dispersion but does not specify exactly one standard deviation.",
+      "algorithm_parameters.C2_control_completion.extrapolation_bound_high": "RETAINED; UNSPECIFIED IN MANUSCRIPT: the one-standard-deviation margin is the supplied implementation convention.",
+      "algorithm_parameters.C2_control_completion.non_negativity_floors": "RETAINED: Investment is the descriptive label pinned by the notebook's acceptance registry; non_negativity_column_bindings maps it to InvestmentRate.",
+      "data_preprocessing_parameters.control_completion_hierarchy.non_negativity_vars": "RETAINED: descriptive labels agree with the supplied specification; non_negativity_column_bindings identifies the actual model columns.",
+      "algorithm_parameters.G0_treatment_coding_resolution.sort_by": "RETAINED; UNSPECIFIED IN MANUSCRIPT: exact tie ordering is a coding convention; equal-priority conflicts follow conflict_rule.",
+      "algorithm_parameters.G0_treatment_coding_resolution.selection_rule": "REVISED; UNSPECIFIED IN MANUSCRIPT: equal-priority documentary conflicts require recorded adjudication; no automatic entry-year choice is substituted.",
+      "algorithm_parameters.G0_treatment_coding_resolution.secondary_material_rule": "RETAINED; UNSPECIFIED IN MANUSCRIPT: this rank-based acceptance rule operationalizes, but does not replace, documentary review.",
+      "algorithm_parameters.G0_treatment_coding_resolution.conflict_rule": "REVISED; UNSPECIFIED IN MANUSCRIPT: equal-priority documentary conflicts require recorded adjudication; no automatic entry-year choice is substituted.",
+      "algorithm_parameters.F4_factor_proxy_variants.stability_flagging_rule": "RETAINED; UNSPECIFIED IN MANUSCRIPT: the 1000 cutoff is an implementation reporting flag, not a paper-defined exclusion threshold.",
+      "algorithm_parameters.I1_pointwise_ribbon_figure2.per_year_construction": "RETAINED; UNSPECIFIED IN MANUSCRIPT: the exact 1.96 ribbon formula is a reporting convention. The current lagged estimator supplies fitted gaps from 2001, not a fabricated 2000 fitted observation.",
+      "pretreatment_means_2009_2013_integrity_targets.tolerance": "RETAINED; UNSPECIFIED IN MANUSCRIPT: 0.001 is an implementation comparison tolerance; Table A7 reports these means to three decimals.",
+      "model_parameters.CCEDID_model.design_restrictions.no_treatment_information_used": "RETAINED: treatment information is excluded from eligibility and completion, but necessarily defines policy target and donor sets.",
+      "methodological_notes.no_replication_archive": "RETAINED: this is the supplied provenance statement, not evidence of a newly performed arXiv archive inspection."
+    },
+    "unspecified_parameter_prefixes": {
+      "raw_data_schemas.comtrade_block_a_raw.candidate_hs_codes": "product codes are the supplied defaults, not codes specified by the manuscript",
+      "raw_data_schemas.comtrade_block_b_raw.candidate_hs_codes": "gas product codes are documented reproduction choices",
+      "algorithm_parameters.B1_country_history_bootstrap.invalid_resample_policy": "the precise redraw policy is an implementation choice",
+      "algorithm_parameters.B2_region_block_bootstrap.invalid_resample_policy": "the precise redraw policy is an implementation choice",
+      "methodology_parameters.bootstrap_inference.invalid_resample_policy": "the precise redraw policy is an implementation choice",
+      "invalid_resample_policy": "redraw validity rules and the 50-discard flag are supplied implementation policies",
+      "data_preprocessing_parameters.control_completion_hierarchy.trend_bounds_sigma": "one-standard-deviation bounds operationalize unspecified dispersion bounds",
+      "network_training_parameters.statistical_estimation_analogues.convergence_iterations": "this denotes a closed-form solve, not neural-network training",
+      "plot_construction_parameters.figure_3_european_heterogeneity.colour_scale": "the exact colour limits are supplied plotting conventions",
+      "plot_construction_parameters.figure_B1_worldwide_heterogeneity.colour_scale": "the exact colour limits are supplied plotting conventions",
+      "plot_construction_parameters.figure_B2_placebo_distributions.bins": "50 bins is a supplied plotting convention",
+      "plot_construction_parameters.global_plot_conventions": "these are supplied presentation conventions",
+      "runtime_inputs": "runtime defaults must be bound explicitly; seed integers are reproduction choices",
+      "reproducibility_gaps.random_seeds.primary_reproduction_v1": "primary SeedSequence entropy is 20261002, not a recovered author seed",
+      "reproducibility_gaps.random_seeds.stability_reproduction_v1": "alternative SeedSequence entropy is 20261003; stability has not yet been evaluated",
+      "reproducibility_gaps.region_block_definition.selected_regions": "the selected seven-region vocabulary is a documented default",
+      "reproducibility_gaps.comtrade_hs_codes.selected_implementation": "the selected product codes are documented defaults"
+    },
+    "corrections": [
+      {
+        "path": "equation_parameters.eq8_covariate_loadings.Lambda_dimension",
+        "previous_value": [
+          8,
+          2
+        ],
+        "configured_value": [
+          2,
+          8
+        ],
+        "reason": "resolves transposed loadings: F^+ is 2 x 13 and X_i is 13 x 8",
+        "evidence": "latex_context.txt, Equation (8) and Appendix B5--B6"
+      },
+      {
+        "path": "equation_parameters.eqB10_to_B13_reconstruction.status",
+        "previous_value": "referenced_but_not_typeset",
+        "configured_value": "reconstructed_from_equations_12_to_15",
+        "reason": "resolves the required-field placeholder by declaring the reconstruction",
+        "evidence": "latex_context.txt, Equations (12)--(15) and Appendix B reference"
+      },
+      {
+        "path": "country_validation_registries.sanctions_target_42",
+        "previous_value": [],
+        "configured_value": [
+          "ALB",
+          "AUS",
+          "AUT",
+          "BEL",
+          "BIH",
+          "BGR",
+          "CAN",
+          "HRV",
+          "CYP",
+          "CZE",
+          "DNK",
+          "EST",
+          "FIN",
+          "FRA",
+          "DEU",
+          "GRC",
+          "HUN",
+          "ISL",
+          "IRL",
+          "ITA",
+          "JPN",
+          "KOR",
+          "LVA",
+          "LTU",
+          "LUX",
+          "MLT",
+          "MDA",
+          "NLD",
+          "NZL",
+          "MKD",
+          "NOR",
+          "POL",
+          "PRT",
+          "ROU",
+          "SGP",
+          "SVK",
+          "SVN",
+          "ESP",
+          "SWE",
+          "CHE",
+          "GBR",
+          "USA"
+        ],
+        "reason": "resolves empty roster by transcribing the indicated Table A6 column",
+        "evidence": "latex_context.txt, Table A6; target identities cross-checked with A4"
+      },
+      {
+        "path": "country_validation_registries.direct_arming_target_29",
+        "previous_value": [],
+        "configured_value": [
+          "AUS",
+          "BEL",
+          "BGR",
+          "CAN",
+          "HRV",
+          "CZE",
+          "DNK",
+          "EST",
+          "FIN",
+          "FRA",
+          "DEU",
+          "GRC",
+          "ITA",
+          "LVA",
+          "LTU",
+          "LUX",
+          "NLD",
+          "MKD",
+          "NOR",
+          "POL",
+          "PRT",
+          "ROU",
+          "SVK",
+          "SVN",
+          "ESP",
+          "SWE",
+          "TUR",
+          "GBR",
+          "USA"
+        ],
+        "reason": "resolves empty roster by transcribing the indicated Table A6 column",
+        "evidence": "latex_context.txt, Table A6; target identities cross-checked with A4"
+      },
+      {
+        "path": "country_validation_registries.sanctions_donors_84",
+        "previous_value": [],
+        "configured_value": [
+          "DZA",
+          "AGO",
+          "ARM",
+          "AZE",
+          "BHS",
+          "BHR",
+          "BGD",
+          "BLZ",
+          "BEN",
+          "BTN",
+          "BOL",
+          "BWA",
+          "BRA",
+          "BRN",
+          "BFA",
+          "KHM",
+          "CMR",
+          "CAF",
+          "CHL",
+          "CHN",
+          "COL",
+          "COM",
+          "COG",
+          "CRI",
+          "CIV",
+          "DOM",
+          "ECU",
+          "EGY",
+          "SLV",
+          "FJI",
+          "GAB",
+          "GMB",
+          "GEO",
+          "GHA",
+          "GTM",
+          "GIN",
+          "HND",
+          "HKG",
+          "IND",
+          "IDN",
+          "IRN",
+          "ISR",
+          "KAZ",
+          "KEN",
+          "KIR",
+          "KWT",
+          "KGZ",
+          "MAC",
+          "MDG",
+          "MYS",
+          "MLI",
+          "MRT",
+          "MUS",
+          "MEX",
+          "MNG",
+          "MAR",
+          "NAM",
+          "NPL",
+          "NIC",
+          "NER",
+          "OMN",
+          "PAK",
+          "PAN",
+          "PRY",
+          "PER",
+          "PHL",
+          "RWA",
+          "SAU",
+          "SEN",
+          "SYC",
+          "SLB",
+          "ZAF",
+          "LKA",
+          "TZA",
+          "THA",
+          "TGO",
+          "TON",
+          "TUN",
+          "TUR",
+          "UGA",
+          "ARE",
+          "URY",
+          "VNM",
+          "PSE"
+        ],
+        "reason": "resolves empty roster by transcribing the indicated Table A6 column",
+        "evidence": "latex_context.txt, Table A6; target identities cross-checked with A4"
+      },
+      {
+        "path": "country_validation_registries.direct_arming_donors_CPI_96",
+        "previous_value": [],
+        "configured_value": [
+          "ALB",
+          "DZA",
+          "AGO",
+          "ARM",
+          "AUT",
+          "AZE",
+          "BHS",
+          "BHR",
+          "BGD",
+          "BLZ",
+          "BEN",
+          "BTN",
+          "BOL",
+          "BWA",
+          "BRA",
+          "BRN",
+          "BFA",
+          "KHM",
+          "CMR",
+          "CAF",
+          "CHL",
+          "CHN",
+          "COL",
+          "COM",
+          "COG",
+          "CRI",
+          "CIV",
+          "CYP",
+          "DOM",
+          "ECU",
+          "EGY",
+          "SLV",
+          "FJI",
+          "GAB",
+          "GMB",
+          "GEO",
+          "GHA",
+          "GTM",
+          "GIN",
+          "HND",
+          "HKG",
+          "HUN",
+          "ISL",
+          "IND",
+          "IDN",
+          "IRN",
+          "IRL",
+          "ISR",
+          "JPN",
+          "KAZ",
+          "KEN",
+          "KIR",
+          "KOR",
+          "KWT",
+          "KGZ",
+          "MAC",
+          "MDG",
+          "MYS",
+          "MLI",
+          "MLT",
+          "MRT",
+          "MUS",
+          "MEX",
+          "MDA",
+          "MNG",
+          "MAR",
+          "NAM",
+          "NPL",
+          "NZL",
+          "NIC",
+          "NER",
+          "OMN",
+          "PAK",
+          "PAN",
+          "PRY",
+          "PER",
+          "PHL",
+          "RWA",
+          "SAU",
+          "SEN",
+          "SYC",
+          "SGP",
+          "SLB",
+          "ZAF",
+          "LKA",
+          "CHE",
+          "TZA",
+          "THA",
+          "TGO",
+          "TON",
+          "TUN",
+          "UGA",
+          "ARE",
+          "URY",
+          "VNM",
+          "PSE"
+        ],
+        "reason": "resolves empty roster by transcribing the indicated Table A6 column",
+        "evidence": "latex_context.txt, Table A6; target identities cross-checked with A4"
+      },
+      {
+        "path": "country_validation_registries.direct_arming_donors_GDPpc_97",
+        "previous_value": [],
+        "configured_value": [
+          "ALB",
+          "DZA",
+          "AGO",
+          "ARM",
+          "AUT",
+          "AZE",
+          "BHS",
+          "BHR",
+          "BGD",
+          "BLZ",
+          "BEN",
+          "BTN",
+          "BOL",
+          "BIH",
+          "BWA",
+          "BRA",
+          "BRN",
+          "BFA",
+          "KHM",
+          "CMR",
+          "CAF",
+          "CHL",
+          "CHN",
+          "COL",
+          "COM",
+          "COG",
+          "CRI",
+          "CIV",
+          "CYP",
+          "DOM",
+          "ECU",
+          "EGY",
+          "SLV",
+          "FJI",
+          "GAB",
+          "GMB",
+          "GEO",
+          "GHA",
+          "GTM",
+          "GIN",
+          "HND",
+          "HKG",
+          "HUN",
+          "ISL",
+          "IND",
+          "IDN",
+          "IRN",
+          "IRL",
+          "ISR",
+          "JPN",
+          "KAZ",
+          "KEN",
+          "KIR",
+          "KOR",
+          "KWT",
+          "KGZ",
+          "MAC",
+          "MDG",
+          "MYS",
+          "MLI",
+          "MLT",
+          "MRT",
+          "MUS",
+          "MEX",
+          "MDA",
+          "MNG",
+          "MAR",
+          "NAM",
+          "NPL",
+          "NZL",
+          "NIC",
+          "NER",
+          "OMN",
+          "PAK",
+          "PAN",
+          "PRY",
+          "PER",
+          "PHL",
+          "RWA",
+          "SAU",
+          "SEN",
+          "SYC",
+          "SGP",
+          "SLB",
+          "ZAF",
+          "LKA",
+          "CHE",
+          "TZA",
+          "THA",
+          "TGO",
+          "TON",
+          "TUN",
+          "UGA",
+          "ARE",
+          "URY",
+          "VNM",
+          "PSE"
+        ],
+        "reason": "resolves empty roster by transcribing the indicated Table A6 column",
+        "evidence": "latex_context.txt, Table A6; target identities cross-checked with A4"
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_wide.columns",
+        "before": [
+          "country_name",
+          "country_code",
+          "indicator_name",
+          "indicator_code",
+          "1996-2024"
+        ],
+        "after": [
+          "country_name",
+          "country_code",
+          "indicator_name",
+          "indicator_code",
+          "1996",
+          "1997",
+          "1998",
+          "1999",
+          "2000",
+          "2001",
+          "2002",
+          "2003",
+          "2004",
+          "2005",
+          "2006",
+          "2007",
+          "2008",
+          "2009",
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_wide.float_columns",
+        "before": null,
+        "after": [
+          "1996",
+          "1997",
+          "1998",
+          "1999",
+          "2000",
+          "2001",
+          "2002",
+          "2003",
+          "2004",
+          "2005",
+          "2006",
+          "2007",
+          "2008",
+          "2009",
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_wide.int_columns",
+        "before": null,
+        "after": [],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_wide.category_columns",
+        "before": null,
+        "after": [],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_wide.code_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_wide.membership_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_wide.primary_key",
+        "before": [
+          "country_code",
+          "indicator_code"
+        ],
+        "after": [
+          "country_code",
+          "indicator_code"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_wide.optional_extension_columns",
+        "before": null,
+        "after": [],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_long.columns",
+        "before": [
+          "country_code",
+          "country_name",
+          "indicator_code",
+          "indicator_name",
+          "year",
+          "value"
+        ],
+        "after": [
+          "country_code",
+          "country_name",
+          "indicator_code",
+          "indicator_name",
+          "year",
+          "value"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_long.float_columns",
+        "before": null,
+        "after": [
+          "value"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_long.int_columns",
+        "before": null,
+        "after": [
+          "year"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_long.category_columns",
+        "before": null,
+        "after": [],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_long.code_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_long.membership_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_long.primary_key",
+        "before": [
+          "country_code",
+          "indicator_code",
+          "year"
+        ],
+        "after": [
+          "country_code",
+          "indicator_code",
+          "year"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.wdi_raw_long.optional_extension_columns",
+        "before": null,
+        "after": [],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "raw_data_schemas.wgi_raw_long.columns",
+        "before": [
+          "country_code",
+          "country_name",
+          "year",
+          "rule_of_law",
+          "source_release"
+        ],
+        "after": [
+          "country_code",
+          "country_name",
+          "year",
+          "rule_of_law",
+          "source_release"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wgi_raw_long.float_columns",
+        "before": null,
+        "after": [
+          "rule_of_law"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wgi_raw_long.int_columns",
+        "before": null,
+        "after": [
+          "year"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wgi_raw_long.category_columns",
+        "before": null,
+        "after": [],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wgi_raw_long.code_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wgi_raw_long.membership_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.wgi_raw_long.primary_key",
+        "before": [
+          "country_code",
+          "year",
+          "source_release"
+        ],
+        "after": [
+          "country_code",
+          "year",
+          "source_release"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.wgi_raw_long.optional_extension_columns",
+        "before": null,
+        "after": [],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_a_raw.columns",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "reporter_name",
+          "partner_code",
+          "partner_name",
+          "year",
+          "product_description",
+          "product_code",
+          "trade_flow",
+          "value_usd"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_a_raw.float_columns",
+        "before": null,
+        "after": [
+          "value_usd"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_a_raw.int_columns",
+        "before": null,
+        "after": [
+          "year"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_a_raw.category_columns",
+        "before": null,
+        "after": [
+          "product_description",
+          "trade_flow"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_a_raw.code_columns",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "partner_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_a_raw.membership_columns",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "partner_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_a_raw.primary_key",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "year",
+          "product_description"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_a_raw.optional_extension_columns",
+        "before": null,
+        "after": [],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_b_raw.columns",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "reporter_name",
+          "partner_code",
+          "partner_name",
+          "year",
+          "product_description",
+          "trade_flow",
+          "value_usd",
+          "mirror_availability"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_b_raw.float_columns",
+        "before": null,
+        "after": [
+          "value_usd"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_b_raw.int_columns",
+        "before": null,
+        "after": [
+          "year"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_b_raw.category_columns",
+        "before": null,
+        "after": [
+          "product_description",
+          "trade_flow",
+          "mirror_availability"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_b_raw.code_columns",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "partner_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_b_raw.membership_columns",
+        "before": null,
+        "after": [
+          "reporter_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_b_raw.primary_key",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "partner_code",
+          "year",
+          "product_description",
+          "trade_flow"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_b_raw.optional_extension_columns",
+        "before": null,
+        "after": [],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_c_raw.columns",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "reporter_name",
+          "partner_code",
+          "partner_name",
+          "year",
+          "product_description",
+          "trade_flow",
+          "value_usd",
+          "recovered_via"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_c_raw.float_columns",
+        "before": null,
+        "after": [
+          "value_usd"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_c_raw.int_columns",
+        "before": null,
+        "after": [
+          "year"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_c_raw.category_columns",
+        "before": null,
+        "after": [
+          "product_description",
+          "trade_flow",
+          "recovered_via"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_c_raw.code_columns",
+        "before": null,
+        "after": [
+          "reporter_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_c_raw.membership_columns",
+        "before": null,
+        "after": [
+          "reporter_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_c_raw.primary_key",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "year"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_block_c_raw.optional_extension_columns",
+        "before": null,
+        "after": [
+          "exporter_sum_components_json",
+          "exporter_sum_query_json",
+          "exporter_sum_source_id",
+          "exporter_sum_components_sha256"
+        ],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_cell_status_raw.columns",
+        "before": null,
+        "after": [
+          "reporter_code",
+          "year",
+          "series",
+          "request_type",
+          "retry_succeeded",
+          "hs_report_confirmed",
+          "value_usd",
+          "final_status",
+          "downstream_disposition"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_cell_status_raw.float_columns",
+        "before": null,
+        "after": [
+          "value_usd"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_cell_status_raw.int_columns",
+        "before": null,
+        "after": [
+          "year",
+          "retry_succeeded",
+          "hs_report_confirmed"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_cell_status_raw.category_columns",
+        "before": null,
+        "after": [
+          "series",
+          "request_type",
+          "final_status",
+          "downstream_disposition"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_cell_status_raw.code_columns",
+        "before": null,
+        "after": [
+          "reporter_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_cell_status_raw.membership_columns",
+        "before": null,
+        "after": [
+          "reporter_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_cell_status_raw.primary_key",
+        "before": [
+          "reporter_code",
+          "year",
+          "series"
+        ],
+        "after": [
+          "reporter_code",
+          "year",
+          "series"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.comtrade_cell_status_raw.optional_extension_columns",
+        "before": null,
+        "after": [],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "raw_data_schemas.nominal_gdp_raw.columns",
+        "before": null,
+        "after": [
+          "country_code",
+          "country_name",
+          "year",
+          "indicator_code",
+          "value_usd",
+          "ingest_validation"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.nominal_gdp_raw.float_columns",
+        "before": null,
+        "after": [
+          "value_usd"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.nominal_gdp_raw.int_columns",
+        "before": null,
+        "after": [
+          "year"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.nominal_gdp_raw.category_columns",
+        "before": null,
+        "after": [
+          "ingest_validation"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.nominal_gdp_raw.code_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.nominal_gdp_raw.membership_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.nominal_gdp_raw.primary_key",
+        "before": [
+          "country_code",
+          "year"
+        ],
+        "after": [
+          "country_code",
+          "year"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.nominal_gdp_raw.optional_extension_columns",
+        "before": null,
+        "after": [],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "raw_data_schemas.policy_ledger_raw.columns",
+        "before": null,
+        "after": [
+          "country_code",
+          "policy",
+          "issuing_authority",
+          "document_title",
+          "publication_date",
+          "archived_source",
+          "policy_type",
+          "entry_year",
+          "coding_decision",
+          "priority_rank"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.policy_ledger_raw.float_columns",
+        "before": null,
+        "after": [],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.policy_ledger_raw.int_columns",
+        "before": null,
+        "after": [
+          "entry_year",
+          "priority_rank"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.policy_ledger_raw.category_columns",
+        "before": null,
+        "after": [
+          "policy",
+          "archived_source",
+          "policy_type",
+          "coding_decision"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.policy_ledger_raw.code_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.policy_ledger_raw.membership_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.policy_ledger_raw.primary_key",
+        "before": [
+          "country_code",
+          "policy",
+          "source_document"
+        ],
+        "after": [
+          "country_code",
+          "policy",
+          "document_title"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.policy_ledger_raw.optional_extension_columns",
+        "before": null,
+        "after": [
+          "adjudication_selected",
+          "adjudicated_entry_year",
+          "adjudication_note"
+        ],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "raw_data_schemas.country_metadata_raw.columns",
+        "before": null,
+        "after": [
+          "country_code",
+          "country_name",
+          "world_bank_region",
+          "geopolitical_role",
+          "retained_in_final_panel"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.country_metadata_raw.float_columns",
+        "before": null,
+        "after": [],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.country_metadata_raw.int_columns",
+        "before": null,
+        "after": [
+          "retained_in_final_panel"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.country_metadata_raw.category_columns",
+        "before": null,
+        "after": [
+          "world_bank_region",
+          "geopolitical_role"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.country_metadata_raw.code_columns",
+        "before": null,
+        "after": [
+          "country_code"
+        ],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.country_metadata_raw.membership_columns",
+        "before": null,
+        "after": [],
+        "reason": "Actual SourceSchema contract; wide year labels are strings in YAML and canonical integers at ingest."
+      },
+      {
+        "path": "raw_data_schemas.country_metadata_raw.primary_key",
+        "before": [
+          "country_code"
+        ],
+        "after": [
+          "country_code"
+        ],
+        "reason": "Use the actual operative key; source_document is not an implemented alias."
+      },
+      {
+        "path": "raw_data_schemas.country_metadata_raw.optional_extension_columns",
+        "before": null,
+        "after": [],
+        "reason": "Optional exact ordered suffix; its evidence is validated by the consuming callable."
+      },
+      {
+        "path": "algorithm_parameters.G0_treatment_coding_resolution.selection_rule",
+        "before": "lowest_priority_rank_then_earliest_entry_year",
+        "after": "lowest_priority_rank; earliest publication/entry ordering only when no equal-rank conflict; conflicting evidence requires recorded adjudication",
+        "reason": "Match resolve_pair_selection; automatic selection is not documentary adjudication."
+      },
+      {
+        "path": "algorithm_parameters.G0_treatment_coding_resolution.conflict_rule",
+        "before": "If two entries of equal priority_rank disagree on entry_year, choose the earlier entry_year and flag the conflict for manual review.",
+        "after": "Equal-priority disagreement in entry_year or coding_decision raises unless exactly one top-priority record is adjudication_selected or a consistent adjudicated_entry_year identifies one top-priority record; a nonblank adjudication_note is mandatory. An adjudicated year need not be the earliest.",
+        "reason": "Preserve the existing evidence hierarchy and make the declaration accurate."
+      },
+      {
+        "path": "equation_parameters.eq6_pooled_beta_estimator.inversion_baseline",
+        "before": "linear_solve",
+        "after": "Moore_Penrose_pseudo_inverse_of_pooled_residualized_cross_product_in_all_cases",
+        "reason": "Appendix B4 is the implemented pooled-beta route; conditional linear solve belongs to the residual maker."
+      },
+      {
+        "path": "equation_parameters.eq6_pooled_beta_estimator.stabilization",
+        "before": "pseudo_inverse_when_rank_deficient",
+        "after": "SVD_rank_and_condition_diagnostics; Moore_Penrose_pseudo_inverse",
+        "reason": "Explicit Appendix B stabilization."
+      },
+      {
+        "path": "algorithm_parameters.B1_country_history_bootstrap.invalid_resample_policy",
+        "before": "discard_and_redraw_until_B_valid_estimates; report discarded_count",
+        "after": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws.",
+        "reason": "Document the actual bounded policy and preserve Appendix B stabilization in both bootstrap branches."
+      },
+      {
+        "path": "algorithm_parameters.B2_region_block_bootstrap.invalid_resample_policy",
+        "before": "discard_and_redraw_until_B_valid_estimates",
+        "after": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws.",
+        "reason": "Document the actual bounded policy and preserve Appendix B stabilization in both bootstrap branches."
+      },
+      {
+        "path": "invalid_resample_policy.country_history_bootstrap",
+        "before": "If a resampled panel yields fewer than 2 eligible donors, or yields a rank-deficient factor matrix that cannot be pseudoinverted, discard the draw and redraw. Stop when 500 valid complete-design estimates have been produced. Report discarded_count.",
+        "after": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws.",
+        "reason": "Bounded execution avoids an unbounded redraw loop; finite pseudoinverse fits are permitted."
+      },
+      {
+        "path": "invalid_resample_policy.region_block_bootstrap",
+        "before": "If a resampled region stack yields fewer than 2 eligible donors, or leads to a rank-deficient factor, discard and redraw. Stop at 500 valid. Report discarded_count.",
+        "after": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws.",
+        "reason": "Bounded execution avoids an unbounded redraw loop; finite pseudoinverse fits are permitted."
+      },
+      {
+        "path": "invalid_resample_policy.size_matched_placebo",
+        "before": "If a false coalition assignment yields fewer than 2 pseudo-donors, discard and redraw. Stop at 500 valid. Report discarded_count.",
+        "after": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws.",
+        "reason": "Bounded execution avoids an unbounded redraw loop; finite pseudoinverse fits are permitted."
+      },
+      {
+        "path": "invalid_resample_policy.uniform_reporting_requirement",
+        "before": "The discarded_count must be logged for each branch and reported in the supplementary audit; if it exceeds 50 (10% of B=M=500), the branch is flagged as numerically fragile.",
+        "after": "Log each accepted/rejected attempt and discarded_count for every branch. Fragility is discarded_count / attempted_count > 0.10, not discarded_count / requested_count. Preserve deterministic RNG state chains.",
+        "reason": "Align the denominator of the actual fragility measure."
+      },
+      {
+        "path": "methodology_parameters.bootstrap_inference.invalid_resample_policy",
+        "before": "discard_and_redraw; report discarded_count_per_branch",
+        "after": "Redraw only a sampler ResamplingDegeneracyError or a nonfinite refitted statistic; require at least two target occurrences and two distinct original donors; accept finite rank-deficient factors through the Appendix B pseudo-inverse; propagate schema, programming and refit exceptions; stop at 500 accepted draws or 2500 attempts and retain the full rejection ledger. Flag a discard fraction above 0.10 of attempted draws.",
+        "reason": "Same bounded policy in all declarations."
+      },
+      {
+        "path": "algorithm_parameters.C2_control_completion.dispersion_convention",
+        "before": null,
+        "after": "sample_SD_of_first_five_original_trend_anchors_ddof_1",
+        "reason": "UNSPECIFIED IN MANUSCRIPT: record the current local-trend dispersion convention; full observed range provides extrema."
+      },
+      {
+        "path": "algorithm_parameters.C2_control_completion.insufficient_trend_anchors",
+        "before": null,
+        "after": "raise_for_leading_gap_longer_than_3_years_with_fewer_than_5_original_anchors",
+        "reason": "Do not extend short-gap carry-back to an undocumented long-gap fallback."
+      },
+      {
+        "path": "execution_parameters",
+        "before": null,
+        "after": {
+          "raw_universe_minimum": 130,
+          "comtrade_status_counts": {
+            "russian_gas": {
+              "positive": 229,
+              "verified_zero": 733,
+              "missing": 70
+            },
+            "world_gas": {
+              "positive": 809,
+              "verified_zero": 185,
+              "missing": 38
+            },
+            "russian_non_gas": {
+              "positive": 769,
+              "verified_zero": 224,
+              "missing": 39
+            }
+          },
+          "completion": {
+            "repaired_control_cells": 1471,
+            "derived_fuel_balance_missing_cells": 203
+          },
+          "numerical": {
+            "residual_maker_gram_condition_max": 1000.0,
+            "factor_proxy_condition_flag": 1000.0,
+            "pooled_cross_product_condition_warning": 1000000.0,
+            "rank_tolerance": "sigma_max * max(matrix.shape) * float64_machine_epsilon",
+            "pooled_beta_route": "always_Moore_Penrose_pseudo_inverse",
+            "residual_maker_route": "linear_solve_if_full_rank_and_gram_condition_le_1000_else_pseudo_inverse",
+            "incremental_identity_tolerance": 1e-10,
+            "comparison_tolerance": 0.001,
+            "exposure_completion_count_tolerance": 0
+          },
+          "resampling": {
+            "attempt_cap_multiple": 5,
+            "minimum_target_occurrences": 2,
+            "minimum_distinct_original_donors": 2,
+            "discard_fraction_flag": 0.1,
+            "discard_fraction_denominator": "attempted_draws",
+            "rank_deficient_factor_policy": "accept_when_finite_pseudo_inverse_fit",
+            "redraw_exceptions": [
+              "ResamplingDegeneracyError_from_sampler"
+            ],
+            "refit_exception_policy": "propagate",
+            "nonfinite_statistic_policy": "redraw",
+            "percentile_bounds": [
+              0.025,
+              0.975
+            ]
+          },
+          "secondary_sweeps": {
+            "shortened_wave2_window": [
+              2022,
+              2023
+            ],
+            "active_year_callable": "entry_year_active_window"
+          },
+          "influence": {
+            "top_donors": 10,
+            "muted_response_threshold": 0.8,
+            "trim_fraction_each_tail": 0.1,
+            "trim_count_rule": "floor(N_T * 0.10)",
+            "tie_breaking": "lexicographic_country_code"
+          },
+          "matching": {
+            "characteristic_window": [
+              2009,
+              2013
+            ],
+            "characteristics": [
+              "OilRents",
+              "TradeOpenness",
+              "TermsOfTrade",
+              "InvestmentRate",
+              "GovConsumption",
+              "PopulationGrowth",
+              "RuleOfLaw",
+              "FuelShareBalance",
+              "log_real_GDPpc"
+            ],
+            "covariance_ddof": 1,
+            "covariance_inverse": "Moore_Penrose",
+            "donor_balance": "frequency_expanded_sample_variance"
+          },
+          "exposure": {
+            "standardization_ddof": 1,
+            "zero_denominator": "inadmissible_ratio_not_zero_exposure",
+            "growth_bound_pool": "observed_registered_components_within_same_window"
+          },
+          "heterogeneity_specifications": [
+            {
+              "manuscript_name": "baseline_2018_2021",
+              "name": "baseline",
+              "exposure_variant": "energy_exposure",
+              "window": "w2018_2021",
+              "coverage_rule": "strict",
+              "policy_name": "strict_sanctions",
+              "estimator": "interactive_factor"
+            },
+            {
+              "manuscript_name": "pre_Crimea_2010_2013",
+              "name": "pre_crimea",
+              "exposure_variant": "energy_exposure",
+              "window": "w2010_2013",
+              "coverage_rule": "strict",
+              "policy_name": "strict_sanctions",
+              "estimator": "interactive_factor"
+            },
+            {
+              "manuscript_name": "extended_pre_Crimea_sample",
+              "name": "pre_crimea_extended",
+              "exposure_variant": "energy_exposure",
+              "window": "w2010_2013",
+              "coverage_rule": "extended",
+              "policy_name": "strict_sanctions",
+              "estimator": "interactive_factor"
+            },
+            {
+              "manuscript_name": "two_way_fixed_effects",
+              "name": "twfe",
+              "exposure_variant": "energy_exposure",
+              "window": "w2018_2021",
+              "coverage_rule": "strict",
+              "policy_name": "strict_sanctions",
+              "estimator": "two_way_fixed_effects"
+            },
+            {
+              "manuscript_name": "strict_direct_arming_definition",
+              "name": "direct_arming_strict",
+              "exposure_variant": "energy_exposure",
+              "window": "w2018_2021",
+              "coverage_rule": "strict",
+              "policy_name": "direct_arming",
+              "estimator": "interactive_factor"
+            },
+            {
+              "manuscript_name": "alternative_exposure_gas_share",
+              "name": "gas_share",
+              "exposure_variant": "gas_share",
+              "window": "w2018_2021",
+              "coverage_rule": "strict",
+              "policy_name": "strict_sanctions",
+              "estimator": "interactive_factor"
+            }
+          ],
+          "direct_arming_wrapper": {
+            "outcomes": [
+              "log_CPI",
+              "log_real_GDPpc"
+            ],
+            "wave_references": {
+              "wave_1_level": null,
+              "wave_2_level": [
+                2019,
+                2021
+              ]
+            },
+            "draw_contract": 500
+          },
+          "publication_reference_comparisons": {
+            "effect_target_policy": "independent_418_cell_final_reconciliation",
+            "structural_target_policy": "fail_on_raw_coverage_roster_and_sample_count_mismatch",
+            "baseline_replacement": false
+          },
+          "figure_coverage": {
+            "dynamic_effective_years": [
+              2001,
+              2024
+            ],
+            "unavailable_dynamic_years": [
+              2000
+            ],
+            "figure4_outcomes": [
+              "log_CPI",
+              "log_real_GDPpc"
+            ],
+            "figure_B1_status": "implemented_requires_authoritative_world_geometry"
+          }
+        },
+        "reason": "REVISED: actual execution settings, numerical conventions and explicit deferred publication comparisons. Implementation choices are not manuscript coefficients."
+      },
+      {
+        "path": "independent_authorities",
+        "before": null,
+        "after": {
+          "registration_manifest": {
+            "path": null,
+            "sha256": null,
+            "external_verification_reference": null,
+            "verified_by": null
+          },
+          "status": "awaiting_independently_verified_evidence",
+          "required_registries": [
+            "table_binding",
+            "manuscript_universe",
+            "reconciliation_scenarios",
+            "archive_vintages"
+          ],
+          "trust_rule": "Pin the external manifest digest and verification reference before loading. Never derive trust from a candidate table, scenario, inventory or archive claim.",
+          "manifest_schema": {
+            "table_binding": [
+              "authority_id",
+              "version_id",
+              "sha256"
+            ],
+            "manuscript_universe": [
+              "authority_id",
+              "version_id",
+              "sha256"
+            ],
+            "reconciliation_scenarios": [
+              "boundary_name",
+              "forbidden_role",
+              "probe_id",
+              "probe_version",
+              "sha256"
+            ],
+            "archive_vintages": [
+              "authority_id",
+              "source_id",
+              "source_version",
+              "vintage_tag",
+              "evidence_reference",
+              "claim_sha256"
+            ]
+          }
+        },
+        "reason": "REVISED: explicit authenticated registration mechanism; missing pins remain unresolved, not fabricated."
+      },
+      {
+        "path": "runtime_inputs.archive_version_tag",
+        "before": null,
+        "after": "v1.1.0-frozen",
+        "reason": "Archive release identity is separate from configuration version."
+      },
+      {
+        "path": "version",
+        "before": "1.0.0",
+        "after": "1.1.0",
+        "reason": "Configuration remediation release."
+      },
+      {
+        "path": "configuration_documentation.version",
+        "before": "1.0.0",
+        "after": "1.1.0",
+        "reason": "Configuration remediation release."
+      },
+      {
+        "path": "configuration_documentation.status",
+        "before": "complete_parameter_specification_with_pending_data_provenance",
+        "after": "operative_contracts_remediated_pending_authentic_provenance_and_independent_authorities",
+        "reason": "Do not confuse engineering correction with an empirical replication."
+      },
+      {
+        "path": "algorithm_parameters.I1_pointwise_ribbon_figure2.effective_plot_window",
+        "before": null,
+        "after": [
+          2001,
+          2024
+        ],
+        "reason": "Lagged estimation begins in 2001; the requested 2000 fitted value is unavailable, not zero."
+      },
+      {
+        "path": "algorithm_parameters.I1_pointwise_ribbon_figure2.unavailable_years",
+        "before": null,
+        "after": [
+          2000
+        ],
+        "reason": "No fitted value is fabricated outside the lagged estimation grid."
+      },
+      {
+        "path": "plot_construction_parameters.figure_2_dynamic_CCEDID_gaps.effective_plot_window",
+        "before": null,
+        "after": [
+          2001,
+          2024
+        ],
+        "reason": "Lagged estimation begins in 2001; the requested 2000 fitted value is unavailable, not zero."
+      },
+      {
+        "path": "plot_construction_parameters.figure_2_dynamic_CCEDID_gaps.unavailable_years",
+        "before": null,
+        "after": [
+          2000
+        ],
+        "reason": "No fitted value is fabricated outside the lagged estimation grid."
+      },
+      {
+        "path": "algorithm_parameters.I1_pointwise_ribbon_figure2.per_year_construction",
+        "before": "at each t in {2000, ..., 2024}: se_t = sd_i(g_hat_it) / sqrt(N_T); ribbon_t = (mean_i(g_hat_it) - 1.96*se_t, mean_i(g_hat_it) + 1.96*se_t)",
+        "after": "at each available t in {2001, ..., 2024}: se_t = sd_i(g_hat_it) / sqrt(N_T); ribbon_t = (mean_i(g_hat_it) - 1.96*se_t, mean_i(g_hat_it) + 1.96*se_t); fitted year 2000 is unavailable under the lagged grid",
+        "reason": "Correct the operative scope; the original year-2000 request is retained in unavailable_years."
+      },
+      {
+        "path": "plot_construction_parameters.figure_B1_worldwide_heterogeneity.implementation_status",
+        "before": null,
+        "after": "implemented_requires_authoritative_world_geometry",
+        "reason": "Separate worldwide producer branch; an external scope inventory prevents substituting European geometry."
+      },
+      {
+        "path": "configuration_documentation.required_pipeline_call_contract.runtime_inputs_are_promoted_automatically",
+        "before": false,
+        "after": true,
+        "reason": "The entry point invokes the explicit, conflict-detecting runtime binder."
+      },
+      {
+        "path": "configuration_documentation.fidelity_limitations.runtime_inputs",
+        "before": null,
+        "after": "The top-level entry point automatically invokes a typed, conflict-detecting binder for the six registered scalar inputs; raw sources, geometry, inventories and authentic provenance remain external. Seeds are documented reproduction choices.",
+        "reason": "Replace the former manual-handoff limitation with the implemented binding contract."
+      },
+      {
+        "path": "configuration_documentation.required_pipeline_call_contract.explicit_runtime_bindings.archive_version_tag",
+        "before": null,
+        "after": "runtime_inputs.archive_version_tag -> data.archive_version_tag",
+        "reason": "Forward archive release identity independently of configuration version."
+      },
+      {
+        "path": "configuration_documentation.required_pipeline_call_contract.additional_required_external_keys",
+        "before": [
+          "income_groups",
+          "country_geometry",
+          "table_sources",
+          "table_binding_authority",
+          "manuscript_universe",
+          "declared_facts",
+          "layer_chains"
+        ],
+        "after": [
+          "income_groups",
+          "country_geometry",
+          "table_sources",
+          "table_binding_authority",
+          "manuscript_universe",
+          "declared_facts",
+          "layer_chains",
+          "world_geometry"
+        ],
+        "reason": "World geography is distinct from European geography; both require source/version and scope inventories."
+      },
+      {
+        "path": "configuration_documentation.parameter_annotation_overrides.algorithm_parameters.G0_treatment_coding_resolution.conflict_rule",
+        "before": "RETAINED; UNSPECIFIED IN MANUSCRIPT: retain earlier entry plus a manual-review flag as the supplied implementation convention.",
+        "after": "REVISED; UNSPECIFIED IN MANUSCRIPT: equal-priority documentary conflicts require recorded adjudication; no automatic entry-year choice is substituted.",
+        "reason": "Replace obsolete implementation annotations."
+      },
+      {
+        "path": "configuration_documentation.parameter_annotation_overrides.algorithm_parameters.G0_treatment_coding_resolution.selection_rule",
+        "before": "RETAINED; UNSPECIFIED IN MANUSCRIPT: documentary hierarchy is in the text, but this exact tie-resolution rule is an implementation choice.",
+        "after": "REVISED; UNSPECIFIED IN MANUSCRIPT: equal-priority documentary conflicts require recorded adjudication; no automatic entry-year choice is substituted.",
+        "reason": "Replace obsolete implementation annotations."
+      },
+      {
+        "path": "configuration_documentation.validation_evidence_path",
+        "before": "records/evidence/study_configuration_validation.json",
+        "after": "records/evidence/configuration_remediation_validation.json",
+        "reason": "Use the current draft-bound remediation evidence, preserving the earlier audit separately."
+      }
+    ],
+    "required_pipeline_call_contract": {
+      "entry_point": "orchestrate_study_pipeline",
+      "argument_name": "data",
+      "configuration_binding": "data.study_config",
+      "raw_source_binding": "data.sources",
+      "raw_source_names": [
+        "wdi_raw_wide",
+        "wdi_raw_long",
+        "wgi_raw_long",
+        "comtrade_block_a_raw",
+        "comtrade_block_b_raw",
+        "comtrade_block_c_raw",
+        "comtrade_cell_status_raw",
+        "nominal_gdp_raw",
+        "policy_ledger_raw",
+        "country_metadata_raw"
+      ],
+      "runtime_inputs_are_promoted_automatically": true,
+      "explicit_runtime_bindings": {
+        "seeds": "runtime_inputs.seeds -> data.seeds",
+        "stability_seeds": "runtime_inputs.stability_seeds -> data.stability_seeds",
+        "output_dir": "runtime_inputs.output_dir -> data.output_dir",
+        "replication_archive_root": "runtime_inputs.replication_archive_root -> data.replication_archive_root",
+        "overlay_pair": "runtime_inputs.overlay_pair -> data.overlay_pair",
+        "archive_version_tag": "runtime_inputs.archive_version_tag -> data.archive_version_tag"
+      },
+      "additional_required_external_keys": [
+        "income_groups",
+        "country_geometry",
+        "table_sources",
+        "table_binding_authority",
+        "manuscript_universe",
+        "declared_facts",
+        "layer_chains",
+        "world_geometry"
+      ],
+      "additional_authority_requirements": [
+        "trusted manuscript-universe authority/version pin",
+        "trusted reconciliation-scenario pins"
+      ]
+    },
+    "outcome_label_bindings": {
+      "log_CPI": "log_CPI",
+      "log_real_GDPpc": "log_real_GDPpc",
+      "inflation_rate": "inflation_att",
+      "GDPpc_growth_rate": "growth_att"
+    },
+    "fidelity_notes": [
+      "Algorithm labels A1 through I1 are implementation identifiers, not printed manuscript algorithms.",
+      "B10--B13 labels are reconstructed, not asserted to be typeset source equations.",
+      "UNSPECIFIED IN MANUSCRIPT comments identify reproduction conventions, not author choices.",
+      "Null original algorithm and methodology seed slots denote undisclosed manuscript seeds; runtime seed sets are registered separately.",
+      "HS revision and raw-source API metadata must be retained in extraction ledgers; default product codes alone do not certify trade-data fidelity.",
+      "Calendar 2000 belongs to the raw panel; the lagged estimator has an effective 2001--2024 gap grid.",
+      "The supplied region redraw rule rejects rank deficiency; the Appendix B Moore--Penrose form itself permits rank-deficient projections. Treat this as a validity-policy choice, not a manuscript requirement.",
+      "Finite rank-deficient matrices have Moore--Penrose inverses; do not conflate rank deficiency with inability to compute a pseudoinverse.",
+      "A failed reference comparator reports a fidelity discrepancy; its target value must never overwrite the computed statistic.",
+      "The files do not instantiate policy compensation or procurement allocation rules; those require a separately specified decision layer."
+    ],
+    "unresolved_production_gap_keys": [
+      "wdi_vintage",
+      "WGI_release_year",
+      "policy_source_archive_paths"
+    ],
+    "validation_evidence_path": "records/evidence/configuration_remediation_validation.json",
+    "fidelity_limitations": {
+      "runtime_inputs": "The top-level entry point automatically invokes a typed, conflict-detecting binder for the six registered scalar inputs; raw sources, geometry, inventories and authentic provenance remain external. Seeds are documented reproduction choices."
+    },
+    "operative_binding_contract": {
+      "fixed_paths": [
+        "global_constants.control_lag_years",
+        "global_constants.n_controls",
+        "global_constants.T0_pre_treatment_years",
+        "algorithm_parameters.C1_eligibility_screening.outcome_missing_max",
+        "algorithm_parameters.C1_eligibility_screening.control_high_missing_max",
+        "algorithm_parameters.C1_eligibility_screening.control_high_missing_count_max",
+        "algorithm_parameters.C1_eligibility_screening.control_single_missing_max",
+        "algorithm_parameters.C1_eligibility_screening.critical_window",
+        "algorithm_parameters.C1_eligibility_screening.critical_outcome_missing_max",
+        "algorithm_parameters.C1_eligibility_screening.fixed_before_completion",
+        "algorithm_parameters.C1_eligibility_screening.uses_policy_indicators",
+        "algorithm_parameters.C1_eligibility_screening.uses_estimated_effects",
+        "algorithm_parameters.C2_control_completion.priority_3_max_years",
+        "algorithm_parameters.C2_control_completion.priority_4_anchor_count",
+        "algorithm_parameters.C2_control_completion.dispersion_convention",
+        "algorithm_parameters.C2_control_completion.insufficient_trend_anchors",
+        "algorithm_parameters.C3_outcome_repair.internal_outcome_interpolation",
+        "algorithm_parameters.C3_outcome_repair.leading_backcast_window",
+        "equation_parameters.eq6_pooled_beta_estimator.inversion_baseline",
+        "equation_parameters.eq6_pooled_beta_estimator.stabilization",
+        "equation_parameters.eq15_incremental_wave2_ATT.identity_tolerance",
+        "equation_parameters.eq18_exposure_heterogeneity.controls_included",
+        "equation_parameters.eq18_exposure_heterogeneity.sum_se_computation",
+        "algorithm_parameters.G0_treatment_coding_resolution.conflict_rule",
+        "algorithm_parameters.G0_treatment_coding_resolution.selection_rule",
+        "algorithm_parameters.E2_mahalanobis_matching.M_neighbors",
+        "algorithm_parameters.D4_within_window_completion.interpolation_space",
+        "algorithm_parameters.D4_within_window_completion.internal_gap_max_consecutive",
+        "algorithm_parameters.D4_within_window_completion.edge_extrapolation_min_anchors",
+        "algorithm_parameters.D4_within_window_completion.ratio_recomputed_from_components",
+        "algorithm_parameters.D5_exposure_sample_rules.strict",
+        "algorithm_parameters.D5_exposure_sample_rules.extended",
+        "algorithm_parameters.B1_country_history_bootstrap.replicates_B",
+        "algorithm_parameters.B2_region_block_bootstrap.replicates_B",
+        "algorithm_parameters.B3_size_matched_placebo.replicates_M",
+        "algorithm_parameters.B1_country_history_bootstrap.invalid_resample_policy",
+        "algorithm_parameters.B2_region_block_bootstrap.invalid_resample_policy",
+        "methodology_parameters.bootstrap_inference.invalid_resample_policy",
+        "invalid_resample_policy.country_history_bootstrap",
+        "invalid_resample_policy.region_block_bootstrap",
+        "invalid_resample_policy.size_matched_placebo",
+        "invalid_resample_policy.uniform_reporting_requirement",
+        "model_parameters.factor_proxy_model.dimension",
+        "model_parameters.factor_proxy_model.components",
+        "model_parameters.factor_proxy_model.target_pool_excluded_from_construction",
+        "data_preprocessing_parameters.label_transformation.rate_outcomes_divided_by_100_in_ATT",
+        "data_preprocessing_parameters.label_transformation.rate_outcomes_percentage_points_in_mechanism",
+        "data_preprocessing_parameters.control_lag_rule.lagged_by",
+        "data_preprocessing_parameters.control_lag_rule.lagged_after_completion",
+        "execution_parameters.raw_universe_minimum",
+        "execution_parameters.comtrade_status_counts",
+        "execution_parameters.completion",
+        "execution_parameters.numerical",
+        "execution_parameters.resampling",
+        "execution_parameters.secondary_sweeps",
+        "execution_parameters.influence",
+        "execution_parameters.matching",
+        "execution_parameters.exposure",
+        "execution_parameters.heterogeneity_specifications",
+        "execution_parameters.direct_arming_wrapper",
+        "execution_parameters.figure_coverage",
+        "equation_parameters.eq3_untreated_outcome_model",
+        "equation_parameters.eq4_donor_factor_proxy",
+        "equation_parameters.eq5_pre_treatment_OLS",
+        "equation_parameters.eq7_unit_specific_loadings",
+        "equation_parameters.eq8_covariate_loadings",
+        "equation_parameters.eq9_counterfactual_covariates",
+        "equation_parameters.eq10_counterfactual_outcome",
+        "equation_parameters.eq11_country_year_gap",
+        "equation_parameters.eq12_window_ATT",
+        "equation_parameters.eq16_country_dispersion_SE",
+        "equation_parameters.eq17_exposure_measure",
+        "equation_parameters.eqA1_gas_share",
+        "equation_parameters.eqA2_energy_gdp",
+        "algorithm_parameters.C1_eligibility_screening.critical_window_max_missing_per_outcome",
+        "algorithm_parameters.C2_control_completion.non_negativity_column_bindings",
+        "algorithm_parameters.C2_control_completion.non_negativity_floors",
+        "data_preprocessing_parameters.control_completion_hierarchy.non_negativity_column_bindings",
+        "data_preprocessing_parameters.control_completion_hierarchy.non_negativity_vars",
+        "algorithm_parameters.D2_mirror_flow_recovery",
+        "algorithm_parameters.D3_gas_share_denominator",
+        "algorithm_parameters.D4_within_window_completion.edge_growth_bounds",
+        "algorithm_parameters.D4_within_window_completion.cross_window_gap",
+        "algorithm_parameters.D4_within_window_completion.never_impute_russian_gas_for",
+        "algorithm_parameters.F4_factor_proxy_variants.variants",
+        "algorithm_parameters.F4_factor_proxy_variants.dimensions_by_variant",
+        "algorithm_parameters.G1_exposure_heterogeneity_matrix.specifications",
+        "algorithm_parameters.G1_exposure_heterogeneity_matrix.strict_arming_sanctioner_count",
+        "model_parameters.CCEDID_model",
+        "model_parameters.exposure_heterogeneity_model",
+        "plot_construction_parameters.figure_3_european_heterogeneity.colour_scale_range",
+        "plot_construction_parameters.figure_B1_worldwide_heterogeneity.colour_scale_range"
+      ],
+      "runtime_forwarding": [
+        "seeds",
+        "stability_seeds",
+        "output_dir",
+        "replication_archive_root",
+        "overlay_pair",
+        "archive_version_tag"
+      ],
+      "effect_reference_policy": {
+        "effect_target_policy": "independent_418_cell_final_reconciliation",
+        "structural_target_policy": "fail_on_raw_coverage_roster_and_sample_count_mismatch",
+        "baseline_replacement": false
+      },
+      "source_notebook": "do_sanctions_backfire_remediated_draft.ipynb"
+    }
+  },
+  "execution_parameters": {
+    "raw_universe_minimum": 130,
+    "comtrade_status_counts": {
+      "russian_gas": {
+        "positive": 229,
+        "verified_zero": 733,
+        "missing": 70
+      },
+      "world_gas": {
+        "positive": 809,
+        "verified_zero": 185,
+        "missing": 38
+      },
+      "russian_non_gas": {
+        "positive": 769,
+        "verified_zero": 224,
+        "missing": 39
+      }
+    },
+    "completion": {
+      "repaired_control_cells": 1471,
+      "derived_fuel_balance_missing_cells": 203
+    },
+    "numerical": {
+      "residual_maker_gram_condition_max": 1000.0,
+      "factor_proxy_condition_flag": 1000.0,
+      "pooled_cross_product_condition_warning": 1000000.0,
+      "rank_tolerance": "sigma_max * max(matrix.shape) * float64_machine_epsilon",
+      "pooled_beta_route": "always_Moore_Penrose_pseudo_inverse",
+      "residual_maker_route": "linear_solve_if_full_rank_and_gram_condition_le_1000_else_pseudo_inverse",
+      "incremental_identity_tolerance": 1e-10,
+      "comparison_tolerance": 0.001,
+      "exposure_completion_count_tolerance": 0
+    },
+    "resampling": {
+      "attempt_cap_multiple": 5,
+      "minimum_target_occurrences": 2,
+      "minimum_distinct_original_donors": 2,
+      "discard_fraction_flag": 0.1,
+      "discard_fraction_denominator": "attempted_draws",
+      "rank_deficient_factor_policy": "accept_when_finite_pseudo_inverse_fit",
+      "redraw_exceptions": [
+        "ResamplingDegeneracyError_from_sampler"
+      ],
+      "refit_exception_policy": "propagate",
+      "nonfinite_statistic_policy": "redraw",
+      "percentile_bounds": [
+        0.025,
+        0.975
+      ]
+    },
+    "secondary_sweeps": {
+      "shortened_wave2_window": [
+        2022,
+        2023
+      ],
+      "active_year_callable": "entry_year_active_window"
+    },
+    "influence": {
+      "top_donors": 10,
+      "muted_response_threshold": 0.8,
+      "trim_fraction_each_tail": 0.1,
+      "trim_count_rule": "floor(N_T * 0.10)",
+      "tie_breaking": "lexicographic_country_code"
+    },
+    "matching": {
+      "characteristic_window": [
+        2009,
+        2013
+      ],
+      "characteristics": [
+        "OilRents",
+        "TradeOpenness",
+        "TermsOfTrade",
+        "InvestmentRate",
+        "GovConsumption",
+        "PopulationGrowth",
+        "RuleOfLaw",
+        "FuelShareBalance",
+        "log_real_GDPpc"
+      ],
+      "covariance_ddof": 1,
+      "covariance_inverse": "Moore_Penrose",
+      "donor_balance": "frequency_expanded_sample_variance"
+    },
+    "exposure": {
+      "standardization_ddof": 1,
+      "zero_denominator": "inadmissible_ratio_not_zero_exposure",
+      "growth_bound_pool": "observed_registered_components_within_same_window"
+    },
+    "heterogeneity_specifications": [
+      {
+        "manuscript_name": "baseline_2018_2021",
+        "name": "baseline",
+        "exposure_variant": "energy_exposure",
+        "window": "w2018_2021",
+        "coverage_rule": "strict",
+        "policy_name": "strict_sanctions",
+        "estimator": "interactive_factor"
+      },
+      {
+        "manuscript_name": "pre_Crimea_2010_2013",
+        "name": "pre_crimea",
+        "exposure_variant": "energy_exposure",
+        "window": "w2010_2013",
+        "coverage_rule": "strict",
+        "policy_name": "strict_sanctions",
+        "estimator": "interactive_factor"
+      },
+      {
+        "manuscript_name": "extended_pre_Crimea_sample",
+        "name": "pre_crimea_extended",
+        "exposure_variant": "energy_exposure",
+        "window": "w2010_2013",
+        "coverage_rule": "extended",
+        "policy_name": "strict_sanctions",
+        "estimator": "interactive_factor"
+      },
+      {
+        "manuscript_name": "two_way_fixed_effects",
+        "name": "twfe",
+        "exposure_variant": "energy_exposure",
+        "window": "w2018_2021",
+        "coverage_rule": "strict",
+        "policy_name": "strict_sanctions",
+        "estimator": "two_way_fixed_effects"
+      },
+      {
+        "manuscript_name": "strict_direct_arming_definition",
+        "name": "direct_arming_strict",
+        "exposure_variant": "energy_exposure",
+        "window": "w2018_2021",
+        "coverage_rule": "strict",
+        "policy_name": "direct_arming",
+        "estimator": "interactive_factor"
+      },
+      {
+        "manuscript_name": "alternative_exposure_gas_share",
+        "name": "gas_share",
+        "exposure_variant": "gas_share",
+        "window": "w2018_2021",
+        "coverage_rule": "strict",
+        "policy_name": "strict_sanctions",
+        "estimator": "interactive_factor"
+      }
+    ],
+    "direct_arming_wrapper": {
+      "outcomes": [
+        "log_CPI",
+        "log_real_GDPpc"
+      ],
+      "wave_references": {
+        "wave_1_level": null,
+        "wave_2_level": [
+          2019,
+          2021
+        ]
+      },
+      "draw_contract": 500
+    },
+    "publication_reference_comparisons": {
+      "effect_target_policy": "independent_418_cell_final_reconciliation",
+      "structural_target_policy": "fail_on_raw_coverage_roster_and_sample_count_mismatch",
+      "baseline_replacement": false
+    },
+    "figure_coverage": {
+      "dynamic_effective_years": [
+        2001,
+        2024
+      ],
+      "unavailable_dynamic_years": [
+        2000
+      ],
+      "figure4_outcomes": [
+        "log_CPI",
+        "log_real_GDPpc"
+      ],
+      "figure_B1_status": "implemented_requires_authoritative_world_geometry"
+    }
+  },
+  "independent_authorities": {
+    "registration_manifest": {
+      "path": null,
+      "sha256": null,
+      "external_verification_reference": null,
+      "verified_by": null
+    },
+    "status": "awaiting_independently_verified_evidence",
+    "required_registries": [
+      "table_binding",
+      "manuscript_universe",
+      "reconciliation_scenarios",
+      "archive_vintages"
+    ],
+    "trust_rule": "Pin the external manifest digest and verification reference before loading. Never derive trust from a candidate table, scenario, inventory or archive claim.",
+    "manifest_schema": {
+      "table_binding": [
+        "authority_id",
+        "version_id",
+        "sha256"
+      ],
+      "manuscript_universe": [
+        "authority_id",
+        "version_id",
+        "sha256"
+      ],
+      "reconciliation_scenarios": [
+        "boundary_name",
+        "forbidden_role",
+        "probe_id",
+        "probe_version",
+        "sha256"
+      ],
+      "archive_vintages": [
+        "authority_id",
+        "source_id",
+        "source_version",
+        "vintage_tag",
+        "evidence_reference",
+        "claim_sha256"
+      ]
+    }
+  }
+}
