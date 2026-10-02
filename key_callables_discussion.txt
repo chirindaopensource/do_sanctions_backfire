@@ -1,0 +1,499 @@
+## Key callables, Tasks 1 to 33
+
+This discussion covers the 33 final principal entry points in `do_sanctions_backfire_remediated_two.ipynb`, in notebook task order. Python implementation author: **CS Chirinda**. Function bodies and evaluated interfaces establish actual behavior; `latex_context.txt` establishes the methodological standard, with notebook markdown summaries and the folder's Markdown documents used as supporting guidance. Internal helpers are accounted for within their parent task rather than counted as additional principal callables.
+
+Notation: a pair is a policy/outcome combination; $\mathcal{T}^*$ is its estimation target set, $\mathcal{C}_Y$ its outcome-specific donor set, and $\mathcal{S}_Y=\mathcal{T}^*\cup\mathcal{C}_Y$. The preferred design uses $\mathcal{P}=\{2001,\ldots,2013\}$, eight lagged controls, $\mathcal{W}_1=\{2014,\ldots,2021\}$, $\mathcal{W}_2=\{2022,2023,2024\}$, and reference $R=\{2019,2020,2021\}$. Manuscript numbers below are comparison targets, not claims that an empirical reproduction has been completed. These callables supply macroeconomic evidence and audits; compensation schedules and procurement decisions require a further policy layer.
+
+Task numbers identify notebook cells, not runtime stage numbers: Task 33 registers 31 execution stages because Task 16 is invoked through Task 17. Algorithm labels in the configuration are implementation identifiers; the supplied manuscript does not print corresponding named algorithms. Appendix B prints B1 and B3–B8; its references to B10–B13 do not supply additional displayed equations, so the estimands below are tied to the actual main-text Equations (11)–(16).
+
+### Task 1 — `orchestrate_raw_data_ingest`
+
+- **Inputs**: `sources`, a mapping of canonical source names to ten pandas DataFrames; `study_config`, a mapping containing the nineteen declared configuration sections.
+- **Process**: restores tuples lost during JSON serialization; validates configuration structure; canonicalizes each source against its schema; checks primary keys, country codes, year domains and cross-source references.
+- **Process boundary**: partitions Comtrade Block B by importer/mirror flow direction, retaining valid rows and preserving malformed rows, the original block, and independently labelled partition fingerprints.
+- **Outputs**: `IngestBundle` containing `frames`, per-source `records`, restored `study_config`, `config_fingerprint`, `ingested_utc`, `block_b_malformed`, `block_b_original` and `block_b_partition_digests`.
+- **Transformation**: heterogeneous supplied tables become schema-conforming source frames and auditable identities; the public Block B record is updated to identify the retained frame rather than its pre-partition source.
+- **Research role**: source/provenance entry boundary for Appendix A.1, which states that the panel combines "macroeconomic series from the World Development Indicators, rule-of-law data from the Worldwide Governance Indicators, and author-coded policy indicators".
+- **Equations**: none; this stage validates inputs upstream of the potential-outcome model and the exposure ratios.
+- **Implementation distinction**: this callable ingests supplied frames; it does not itself download or authenticate World Bank, Comtrade or legal-source evidence. Hashes establish content identity, not truth of provenance.
+- **Failure behavior**: missing/empty declared sources, schema violations, duplicate keys, invalid references or an invalid Block B partition are refused; undeclared extra sources are logged and ignored.
+
+### Task 2 — `orchestrate_study_config_validation`
+
+- **Inputs**: `study_config`, the restored study configuration; optional `freeze_path`, a filesystem destination for the configuration fingerprint.
+- **Process**: validates the equation and algorithm registries, declared reproduction targets, internal identities, full series codes, country registries, reproducibility-gap resolutions and temporal universes.
+- **Process boundary**: checks each audit before issuing readiness evidence; unresolved production-critical configuration gaps prevent a successful validation rather than receiving invented defaults.
+- **Outputs**: `ConfigValidationReport` containing eight matrices (`equation_matrix`, `algorithm_matrix`, `target_matrix`, `consistency_matrix`, `series_matrix`, `country_matrix`, `gap_matrix`, `temporal_matrix`), fingerprint, UTC timestamp, validated-row count and `readiness_token`.
+- **Transformation**: configuration declarations become cross-checked parameter/target audit tables and a readiness token bound to the configuration content; `freeze_path`, when supplied, persists its fingerprint.
+- **Research role**: reproducibility specification for the design in Sections 3–4 and Appendices A–B; the availability paragraph explicitly says the submission "does not include a replication archive".
+- **Equations**: registry coverage concerns the paper's displayed formulas; validation computes no economic estimand itself.
+- **Implementation distinction**: the nineteen-section schema, readiness token, hashing protocol and algorithm identifiers are engineering contracts, not additional manuscript equations or independently verified extraction vintages.
+- **Failure behavior**: failed registry, consistency, temporal, target or unresolved-gap audits raise an error before downstream scientific execution.
+
+### Task 3 — `orchestrate_data_cleansing`
+
+- **Inputs**: `bundle` (`IngestBundle`) and `study_config`; optional `iso3_registry`, `iso3_registry_path` and `country_mask`; `universe_minimum` defaults to 130.
+- **Process**: canonicalizes missing markers and country-source records against an ISO3 registry; resolves WGI release choices; records the selected HS family registry and applies it to the non-gas trade block.
+- **Process boundary**: compares the default WGI release rule with the release closest to the declared missing-cell target; differences in coverage, release or values are retained for review rather than silently equated.
+- **Outputs**: `CleansedBundle` with cleansed `frames`, a `DataCleanseReport`, per-frame `frame_digests`, configuration and its fingerprint, and `cleansed_utc`.
+- **Transformation**: raw source representations become normalized long-form inputs, a retained candidate universe and explicit exclusion/vintage/product-code evidence; no completion of analytical missing cells is performed here.
+- **Research role**: prepares Appendix A's separately documented source layers; the manuscript stresses that "policy-based donor exclusions are distinct from missing-data exclusions".
+- **Equations**: none; cleansing precedes raw-coverage eligibility and the construction of the eight-control design.
+- **Implementation distinction**: ISO3/HS registry selection and the WGI release-selection algorithms close implementation ambiguities; their choices are not uniquely prescribed by the supplied manuscript.
+- **Failure behavior**: unavailable/invalid registries, impure source frames, inconsistent cell-status counts or an insufficient candidate universe are refused; downstream tasks verify the cleansed handoff digests.
+
+### Task 4 — `orchestrate_eligibility_screening`
+
+- **Inputs**: `bundle` (`CleansedBundle`); optional `policy_ledger`, `metadata_frame`, `expected_otherwise_eligible`, `expected_final`; `enforce_declared_gates` defaults to true.
+- **Process**: calculates variable-specific raw missingness over 2000–2024; applies the four-outcome ceiling, concentrated-control-gap restrictions and the six-year critical-outcome screen before any completion.
+- **Outputs**: `EligibilityScreen` with frozen Boolean `mask`, `exclusion_ledger`, `missingness`, `rule_summary`, fingerprint, screening timestamp and notes.
+- **Transformation**: raw observation-presence indicators become an invariant country inclusion decision and a localized reason for every exclusion; supporting 1996–1999 rows do not enter missingness denominators.
+- **Research role**: Appendix A.2 states "Eligibility is finalized before any completion operation". The declared sequence is 131 otherwise eligible countries, exclusion of Syria and Sudan by the critical screen, then 129 retained countries.
+- **Rules**: writing $m_{iv}$ for raw missingness over 25 years and $m^{C}_{iv}$ for missingness over 2019–2024, the published admission rule is:
+
+$$
+\max_{v\in\mathcal{O}}m_{iv}\le0.35,\qquad \sum_{v\in\mathcal{X}}\mathbf{1}\{m_{iv}>0.25\}\le1,\qquad \max_{v\in\mathcal{X}}m_{iv}\le0.65,\qquad \max_{v\in\{\mathrm{CPI},\mathrm{GDPpc}\}}m^{C}_{iv}\le0.25.
+$$
+
+- **Implementation distinction**: optional policy information is used to demonstrate treatment blindness, not to determine admission; country metadata must not substitute policy roles for coverage eligibility.
+- **Validation**: the critical ceiling permits at most one missing year out of six; production count gates and treatment-blindness checks must pass before the mask is released.
+
+### Task 5 — `orchestrate_control_completion`
+
+- **Inputs**: `bundle` (`CleansedBundle`); optional retained-country `mask`, `expected_repaired_total`, `expected_balance_derived`; `enforce_declared_gates` defaults to true.
+- **Process**: verifies the source handoff; completes controls using internal linear interpolation, trailing carry-forward, short leading carry-back and bounded local-trend backcasting; separately completes fuel-import/export shares and derives their difference.
+- **Outputs**: `ControlCompletionResult` with complete long-form `tensor`, combined `ledger`, `method_summary`, fingerprint, completion timestamp and notes, including anchor-only and fallback records.
+- **Transformation**: missing control cells become deterministic values based on the country's own series; 1996–1999 observations support completion but are not emitted into the 2000–2024 analytical tensor.
+- **Research role**: Appendix A.2 requires "a common deterministic hierarchy" after eligibility is fixed. Table A3 reports 1,471 missing control cells out of 25,800; the implementation additionally gates 203 derived fuel-balance repair cells.
+- **Algorithm**: internal gaps use linear time interpolation; leading spans of at most three years use the first valid value; longer spans fit the first five valid anchors and apply the bound below. Here $s_i$ is the sample SD of those five anchors; generated values for trade openness, investment and government consumption are additionally floored at zero.
+
+$$
+\widetilde{x}_{it}=\min\{U_i,\max\{L_i,\widehat{a}_i+\widehat{b}_it\}\},\qquad L_i=\min(x_i^{\mathrm{obs}})-s_i,\quad U_i=\max(x_i^{\mathrm{obs}})+s_i,\qquad \mathrm{FuelBalance}_{it}=\mathrm{FuelImportShare}_{it}-\mathrm{FuelExportShare}_{it}.
+$$
+
+- **Implementation distinction**: using five-anchor dispersion for the bound and falling back to first-observation carry-back when fewer than five anchors exist are specific code choices. P1–P4 tags and derived-balance union counts are audit categories, not manuscript cell-level method shares or numbered equations.
+- **Validation**: verifies the unchanged eligibility mask, exact country/control/year product, no missing controls, no emitted anchor rows and declared repair totals; the production universe is 129 countries.
+
+### Task 6 — `orchestrate_outcome_repair`
+
+- **Inputs**: `bundle` (`CleansedBundle`), optional `mask`; `carry_forward_cells` defaults to BIH's CPI and inflation cells in 2024; `leading_span` defaults to 2000–2007; optional `expected_total`, `expected_by_outcome`, `expected_carry_forward`; `enforce_declared_gates` defaults to true.
+- **Process**: enumerates missing outcome cells before filling; admits only approved leading backcasts and the two carry-forward cells; fits leading trends to up to the first five observed anchors, requiring at least two, then bounds extrapolations by the full observed series' range plus/minus its sample standard deviation.
+- **Outputs**: `OutcomeRepairResult` with completed `tensor`, cell-level `ledger`, `repair_summary`, fingerprint, repair timestamp and notes identifying reduced-anchor fits.
+- **Transformation**: approved raw-missing CPI/inflation values become country-series reconstructions; observed values are preserved exactly, while raw GDP-per-capita levels and growth require no repair in the declared sample.
+- **Research role**: Appendix A.2 states "the outcome-repair layer does not interpolate internal gaps" and identifies 55 leading cells during 2000–2007, plus two BIH trailing cells: 25 CPI and 32 inflation repairs overall.
+- **Algorithm**: the bounded trend form under Task 5 is applied independently to each outcome, with $s_i$ replaced by the full observed outcome-series SD rather than the control routine's five-anchor SD; the explicitly authorized trailing rule is:
+
+$$
+\widetilde{Y}_{\mathrm{BIH},2024}=Y_{\mathrm{BIH},2023},\qquad Y\in\{\mathrm{CPI},\mathrm{InflationRate}\}.
+$$
+
+- **Implementation distinction**: the five-anchor/minimum-two and sample-dispersion conventions are explicit code choices where the outcome-backcast prose is less specific; they must remain in the repair ledger.
+- **Validation**: enumerated and repaired keys/methods must coincide; unapproved/internal gaps, changed observed cells, remaining missing values or violations of the 57/25/32/two-cell gates are refused.
+
+### Task 7 — `orchestrate_panel_assembly`
+
+- **Inputs**: completed `outcome_tensor` and `control_tensor` DataFrames; optional `units` and `expected_shape`; `enforce_declared_gates` defaults to true.
+- **Process**: joins transformed outcomes and eight controls; logs positive CPI and real GDP per capita; creates analysis-rate fractions and a separate percentage-point mechanism-rate product; shifts controls by one year within country and freezes pre-treatment arrays.
+- **Outputs**: `AnalysisPanel` containing `panel`, `mechanism_rates`, transformation `registry`, `lagged`, per-country/outcome `pre_treatment` matrices, panel/matrix fingerprints, assembly timestamp and notes.
+- **Transformation**: repaired levels and rates become the 129-country by 25-year by 12-variable analytical panel; each preferred pre-treatment design has 13 outcome rows and a $13\times8$ lagged-control matrix.
+- **Research role**: Table A1 specifies "Controls are completed before being lagged and enter the model with a one-year lag" and CPI's natural logarithm only after completion.
+- **Transformations**: $\pi_{it}$ and $q_{it}$ denote source inflation and GDP-per-capita growth expressed in percent; the model's row for year $t$ uses the previous year's control vector.
+
+$$
+y^{P}_{it}=\log(\mathrm{CPI}_{it}),\quad y^{Q}_{it}=\log(\mathrm{RealGDPpc}_{it}),\quad y^{\pi}_{it}=\pi_{it}/100,\quad y^{q}_{it}=q_{it}/100,\qquad \mathrm{row}_t(X_i)=X'_{i,t-1}.
+$$
+
+- **Implementation distinction**: the analysis-rate fractions and retained percentage-point mechanism rates are distinct products; CPI index levels are not interpreted as cross-country absolute price comparisons.
+- **Validation**: requires complete aligned keys, positive log inputs, declared dimensions and finite 2001–2013 matrices; the canonical key constants are `country_code` and `year`.
+
+### Task 8 — `orchestrate_treatment_coding`
+
+- **Inputs**: documentary `ledger` DataFrame and country `universe`; optional `expected_categories`; `expected_pre_escalation` defaults to CZE/POL/USA entry in 2018 and TUR in 2019; `primary_rank_max` defaults to three.
+- **Process**: filters and ranks documentary evidence; resolves country/policy entry decisions; records rejected or superseded evidence; constructs cumulative strict-sanctions and direct-arming country-year indicators.
+- **Outputs**: `TreatmentCodingResult` with `resolved` ledger, `indicators`, `decision_log`, `dropped`, category `summary`, fingerprint, resolution timestamp and notes.
+- **Transformation**: accepted legal/alignment or qualifying arming delivery/commitment evidence becomes the first entry year for each country/policy and an annual zero/one path; evidence provenance remains attached to the decision.
+- **Research role**: Appendix A.3 states "Strict-sanctions codes require an official legal instrument or a formal alignment notice"; arming evidence must satisfy the narrow delivery/commitment definition, not general non-lethal or financial support.
+- **Coding rule**: for policy $p$, $e_i^p$ is the resolved first qualifying year; countries without qualifying evidence remain zero.
+
+$$
+D_{it}^{p}=\mathbf{1}\{e_i^p\text{ exists and }t\ge e_i^p\},\qquad p\in\{\mathrm{strict\ sanctions},\mathrm{direct\ arming}\}.
+$$
+
+- **Implementation distinction**: the evidence-ranking ceiling is a coding-registry convention. Ukraine remains sanctions-coded descriptively; removing it from the main target estimand occurs at partition construction.
+- **Validation**: checks mutually exclusive descriptive categories, Ukraine handling and exactly four pre-2022 arming countries; each accepted entry must retain its documentary decision trail.
+
+### Task 9 — `orchestrate_partition_construction`
+
+- **Inputs**: treatment `indicators`, analytical `panel`, country `metadata` and `universe`; optional `expected_counts` and `expected_roles` declarations.
+- **Process**: validates complete binary cumulative treatment histories; derives ever-treated/never-treated sets; applies geopolitical target/donor exclusions and outcome-specific exclusions; registers eight policy/outcome partitions.
+- **Outputs**: `PartitionRegistry` containing pair-keyed `partitions`, roster `registry`, `counts`, combined `exclusions`, fingerprint, construction timestamp and notes.
+- **Transformation**: descriptive policy paths and panel coverage become distinct estimation rosters; each pair has a frozen target tuple and an eligible, disjoint donor tuple rather than a shared universal donor pool.
+- **Research role**: Equation (1) defines treatment-history roles; Table 2 notes "Treatment and donor roles are defined separately for each policy and outcome". Main sanctions use 42 targets/84 donors; direct-arming log CPI/GDPpc use 29 targets/96 or 97 donors.
+- **Equation (1), before the additional estimation exclusions**:
+
+$$
+\mathcal{T}=\{i:\max_tD_{it}=1\},\qquad \mathcal{C}=\{i:\max_tD_{it}=0\}.
+$$
+
+- **Implementation distinction**: Russia, Belarus and Ukraine are excluded from every donor pool; Ukraine is also removed from the main sanctions target set. Descriptive eligibility is preserved separately from these policy-based restrictions.
+- **Validation**: requires roster disjointness, country/time completeness, exclusion consistency and supplied count/role identities; membership is ever-treated, not restricted to each country's active treatment years.
+
+### Task 10 — `orchestrate_donor_factor`
+
+- **Inputs**: `registry` (`PartitionRegistry`), analytical `panel` and `lagged`; optional `units_by_pair`; `window` defaults to 2001–2013 and `factor_window` to 2000–2024.
+- **Process**: calculates each outcome's yearly mean over its registered donors; adds a constant; assembles pre-treatment factor, dependent-variable and lagged-control matrices in common year/unit order; diagnoses dispersion, rank and conditioning.
+- **Outputs**: `DonorFactorResult` with pair-keyed `factors`, long `proxy_frame`, `diagnostics`, fingerprint, construction timestamp and notes.
+- **Transformation**: donor country-year outcomes become a contemporaneous common-shock proxy available through 2024; target/donor pre-treatment records become pooling arrays, without using target post-treatment outcomes in the proxy.
+- **Research role**: estimator Step 1 specifies that "the CSA is calculated using only the never-treated donor pool". The preferred factor is parsimonious, not the full CCE proxy of outcome and all covariate averages.
+- **Equations (3)–(4)/Appendix B1**: the outcome model allows common control coefficients and heterogeneous common-shock loadings; the preferred factor is constructed below.
+
+$$
+\begin{aligned}Y_{it}(\infty)&=X'_{i,t-1}\beta+\alpha_i'f_t+\varepsilon_{it},\\\bar{Y}_{t,\mathcal{C}_Y}&=\frac{1}{|\mathcal{C}_Y|}\sum_{j\in\mathcal{C}_Y}Y_{jt},\qquad \hat f_t=\begin{pmatrix}1\\\bar{Y}_{t,\mathcal{C}_Y}\end{pmatrix},\qquad \hat F=[\hat f'_{2001};\ldots;\hat f'_{2013}].\end{aligned}
+$$
+
+- **Implementation distinction**: absent `units_by_pair`, pooled units are the pair's targets plus donors. Numerical condition warnings describe the design; they do not verify donor immunity to spillovers.
+- **Validation**: donor identity, yearly completeness, lagged-control alignment and finite matrices must hold separately for every registered pair.
+
+### Task 11 — `orchestrate_pretreatment_fit`
+
+- **Inputs**: `factor_result`, the Task 10 factor/design collection; `condition_max` defaults to 1,000 for the factor cross-product inversion route.
+- **Process**: forms and verifies the residual-maker; residualizes outcomes and controls; estimates a common eight-coefficient vector from pooled pre-treatment observations; recovers country-specific outcome loadings and records numerical diagnostics.
+- **Outputs**: `PooledFitResult` containing `betas`, `beta_names`, pair/country `loadings`, estimator `ledger`, fingerprint, fit timestamp, notes and independently checked `intermediates`.
+- **Transformation**: $Y_i$, $X_i$ and $\hat F$ become common control coefficients and heterogeneous two-component loadings; all estimation observations are restricted to 2001–2013.
+- **Research role**: estimator Step 2 requires "Using strictly the effective pre-treatment period"; Appendix B provides the Moore–Penrose computational form of Equations (6)–(7).
+- **Appendix B3–B4 and B6**: $\hat\gamma_i$ in Appendix B corresponds to main-text $\hat\alpha_i$.
+
+$$
+\begin{aligned}M_{\hat F}&=I_{13}-\hat F\hat F^+,&\widetilde X_i&=M_{\hat F}X_i,&\widetilde Y_i&=M_{\hat F}Y_i,\\\hat\beta&=\left(\sum_{i\in\mathcal S_Y}\widetilde X_i'\widetilde X_i\right)^+\sum_{i\in\mathcal S_Y}\widetilde X_i'\widetilde Y_i,&\hat\alpha_i&=\hat F^+(Y_i-X_i\hat\beta).\end{aligned}
+$$
+
+- **Implementation distinction**: a solve is used for a sufficiently conditioned factor cross-product; otherwise SVD-based pseudo-inversion is used. The pooled coefficient follows B4's cross-product pseudo-inverse, with a separately diagnosed design-pseudo-inverse solution.
+- **Validation**: verifies annihilation, symmetry, idempotence, numerical rank and orthogonality; the 1,000 ceiling and floating-point rank tolerances are code policies, not identification conditions.
+
+### Task 12 — `orchestrate_counterfactual_projection`
+
+- **Inputs**: `fit_result` (`PooledFitResult`), `factor_result` (`DonorFactorResult`) and `registry`; `start_year`/`end_year` default to 2014/2024; optional `observed_panel` supplies the forbidden-input perturbation channel.
+- **Process**: estimates target covariate loadings from pre-treatment controls; projects covariates and outcomes using post-2013 donor factors; builds a separate fitted pre-treatment figure product; executes leakage perturbations and records unrestricted simulated ranges.
+- **Outputs**: `CounterfactualResult` with `loadings`, `covariate_paths`, `outcome_paths`, `fitted_pre_paths`, `range_summary`, `invariant_audit`, fingerprint, projection timestamp and notes.
+- **Transformation**: pre-treatment coefficients/loadings plus donor post-treatment outcomes become target untreated paths; realized target post-treatment covariates are not substituted into the prediction.
+- **Research role**: Step 3 requires "no post-treatment outcome or covariate observed for a target country enters the construction of its own counterfactual path".
+- **Equations (8)–(10)/Appendix B5, B7–B8**, for each projected target and $t\ge2014$:
+
+$$
+\hat\Lambda_i=\hat F^+X_i,\qquad \widehat X_{i,t-1}(\infty)=\hat\Lambda_i'\hat f_t,\qquad \widehat Y_{it}(\infty)=\widehat X_{i,t-1}(\infty)'\hat\beta+\hat\alpha_i'\hat f_t.
+$$
+
+- **Implementation distinction**: simulated controls are not clipped to repair bounds. Without `observed_panel`, the audit uses a synthetic sentinel and records that the realized dependency was inaccessible; this is weaker evidence than perturbing the actual panel.
+- **Validation**: checks projected roster/year coverage, shapes, finiteness and invariance to forbidden inputs; `fitted_pre_paths` remains a visualization product, not part of post-treatment ATT estimation.
+
+### Task 13 — `orchestrate_gap_and_att`
+
+- **Inputs**: `counterfactual_result`, `observed_panel`, `registry`; defaults `wave_one` 2014–2021, `wave_two` 2022–2024, `pre_escalation` 2019–2021 and `post_escalation` 2022–2024; optional `expected_incremental` and `expected_levels` publication-cell declarations.
+- **Process**: aligns observed/projected target outcomes; constructs gaps; takes country-first window means; computes level ATTs, reference gaps, continuation predictions and the incremental ATT by two algebraically equivalent routes.
+- **Outputs**: `GapAttResult` with `gaps`, `country_window_means`, `level_effects`, `pre_escalation_levels`, unrounded `incremental_effects`, `publication_audit`, fingerprint, computation timestamp and notes.
+- **Transformation**: observed and imputed paths become equally weighted coalition contrasts; neither GDP size nor population changes a country's contribution.
+- **Research role**: Step 4 defines "the actual observed outcome minus the imputed counterfactual"; Equations (13)–(15) preserve an inherited gap and require a continuation assumption that "rules out further post-2021 drift".
+- **Equations (11)–(15)**, with $N_T=|\mathcal T^*|$ and preferred windows:
+
+$$
+\begin{aligned}\hat g_{it}&=Y_{it}-\widehat Y_{it}(\infty),&\widehat{\mathrm{ATT}}_W&=\frac1{N_T}\sum_i\frac1{|W|}\sum_{t\in W}\hat g_{it},\\\hat b_i&=\frac13\sum_{t=2019}^{2021}\hat g_{it},&\widehat Y^{\mathrm{cont}}_{it}&=\widehat Y_{it}(\infty)+\hat b_i,\\\widehat{\mathrm{ATT}}_{\mathrm{Inc},2}&=\frac1{N_T}\sum_i\frac13\sum_{t=2022}^{2024}(Y_{it}-\widehat Y^{\mathrm{cont}}_{it})& &=\frac1{N_T}\sum_i\left[\frac13\sum_{t=2022}^{2024}\hat g_{it}-\hat b_i\right].\end{aligned}
+$$
+
+- **Implementation distinction**: all sums over $i$ above are over $\mathcal T^*$; fitted pre-period gaps are excluded. Publication comparisons respect units, displayed precision, rounding intervals and separately declared allowances.
+- **Interpretation**: a log-point estimate $\hat\theta$ converts exactly to $100[\exp(\hat\theta)-1]\%$; rate-fraction effects require multiplication by 100 for percentage points, not exponentiation.
+
+### Task 14 — `orchestrate_country_dispersion_inference`
+
+- **Inputs**: `gap_result` (`GapAttResult`); `pre_window`/`post_window` default to 2019–2021/2022–2024; optional `expected_se`, `expected_stars`, `expected_probability` publication declarations and parquet `destination`.
+- **Process**: forms one complete contrast per target for each level/incremental estimand; calculates the coalition mean, sample-dispersion SE, Student-t statistic/probability and significance marker; verifies publication-cell and marker-source consistency.
+- **Outputs**: `InferenceResult` with `ledger`, country `contrasts`, `critical_values`, `publication_audit`, ledger/input-gap fingerprints, computation timestamp and notes; optional serialized inference ledger.
+- **Transformation**: target paths become independent-country summary contrasts before inference; annual observations are not separately counted as independent replicates.
+- **Research role**: Equation (16) uses the "sample standard deviation" of complete country contrasts; the manuscript states this measure "does not propagate all first-stage uncertainty".
+- **Equation (16) and the implementation's Student-t convention**:
+
+$$
+\bar d=\frac1{N_T}\sum_i d_i,\qquad s_d^2=\frac1{N_T-1}\sum_i(d_i-\bar d)^2,\qquad \widehat{\mathrm{SE}}_{\mathrm{CD}}=\frac{s_d}{\sqrt{N_T}},\qquad t=\frac{\bar d}{\widehat{\mathrm{SE}}_{\mathrm{CD}}},\qquad p=2\Pr(T_{N_T-1}\ge|t|).
+$$
+
+- **Implementation distinction**: Student-t reference probabilities with $N_T-1$ degrees of freedom are explicit code conventions; markers use strict thresholds 0.10/0.05/0.01 and originate exclusively from country-dispersion inference.
+- **Limitation**: donor-factor, coefficient and loading uncertainty, and cross-country dependence, are not propagated by this SE; bootstrap and placebo diagnostics remain separate outputs.
+
+### Task 15 — `orchestrate_baseline_pipeline`
+
+- **Inputs**: `study_config`; `data` containing `registry`, `panel` and `lagged`; optional `pairs`, `reporting_windows`, `expected_incremental` and `expected_stars`.
+- **Process**: freezes the configuration and resolves canonical windows once; for each pair, independently builds its donor factor, pooled fit/loadings, projected untreated paths, gap estimands and country-dispersion inference.
+- **Outputs**: `BaselinePipelineResult` containing pair-keyed `results`, step `validation`, object `freshness`, shared `effective_windows`, `declared_comparisons`, collection fingerprint, completion timestamp and notes.
+- **Transformation**: a frozen partition registry and completed panel become complete per-pair baseline results; factor/coefficient/loading state is not reused across incompatible policy/outcome designs.
+- **Research role**: implements the main model, "The estimator can be understood in five steps": donor proxy, pre-treatment estimation, untreated projection, gaps and aggregation, followed by Equation (16) inference.
+- **Equation coverage**: the stage composes Equations (4)–(16), as detailed under Tasks 10–14; it introduces no alternative treatment-effect estimator.
+- **Implementation distinction**: `reporting_windows` overrides are resolved and logged as sweep variants. Publication comparisons use declared cells, while software/data-contract failures remain independent of manuscript agreement.
+- **Validation**: verifies immutable configuration and parent inputs, complete requested-pair coverage, fresh scientific objects and algebraic/inference consistency; absent required data keys are refused.
+- **Interpretation**: this is donor-factor imputation with heterogeneous loadings, not a conventional two-way fixed-effects DiD; causal interpretation still requires stable relationships, appropriate timing and limited donor spillovers.
+
+### Task 16 — `orchestrate_resampling_inference`
+
+- **Inputs**: `policy_name`, `outcome_name`, `baseline_config`, frozen `data`, explicit registered `seeds` and `region_map`; `bootstrap_replicates` and `placebo_replicates` default to 500; `attempt_cap_multiple` defaults to five; optional `expected` reference values.
+- **Process**: spawns separate random streams; resamples target/donor country histories within original policy roles, resamples complete region blocks, and assigns size-matched false coalitions from never-treated donors; fully refits the baseline design for every attempted draw.
+- **Outputs**: `ResamplingResult` with two percentile interval pairs, `p_placebo_hat`, `discarded_counts`, `full_draw_arrays`, `fragile_flags`, seed material, all `attempt_audits` and `fragility_audit`.
+- **Transformation**: whole panel histories become distributions of re-estimated coalition contrasts; repeated country/block occurrences receive distinct identities, preserving their multiplicity rather than being deduplicated.
+- **Research role**: Section 4.3 requires a bootstrap that "resamples whole country paths and re-estimates the complete design"; the false-coalition result is "only a diagnostic tail probability".
+- **Resampling summaries**: $M$ below is the number of accepted placebo draws, and $Q$ denotes empirical quantiles of accepted complete-design bootstrap estimates.
+
+$$
+\widehat p_{\mathrm{pl}}=\frac{1+\sum_{m=1}^{M}\mathbf1\{|\hat\theta^{(m)}|\ge|\hat\theta^{\mathrm{obs}}|\}}{1+M},\qquad \mathrm{CI}_{0.95}=[Q_{0.025}(\hat\theta^*),Q_{0.975}(\hat\theta^*)].
+$$
+
+- **Implementation distinction**: country-history sampling is stratified by original treatment role; the manuscript does not uniquely specify that stratification, branch spawn keys, attempt cap or rejection-fragility threshold.
+- **Validation**: stores accepted and rejected draws with seed/refit lineage; refuses invalid branch coverage and never derives main-table stars from placebo probabilities or bootstrap endpoints.
+
+### Task 17 — `execute_inference`
+
+- **Inputs**: `study_config`, frozen `data`, primary `seeds`; optional `region_map`, authoritative `metadata_frame`, `pairs`, `expected_intervals`, `expected_placebo`; `bootstrap_replicates`/`placebo_replicates` default to 500 each; `stability_seeds` is optional in the signature but required for execution.
+- **Process**: validates registered primary/second seed sets before draws; builds or authenticates the region map; executes Task 16 per requested pair under both seed sets; compares interval endpoints and placebo probabilities with explicit Monte Carlo allowances.
+- **Outputs**: `InferenceExecutionResult` with `intervals`, `placebo`, primary `draws`, `stability_draws`, `stability`, `composition_audit`, `region_validation`, `attempt_audits`, `seed_audit`, `publication_audit`, `region_provenance`, fingerprint, timestamp and notes.
+- **Transformation**: per-pair resampling distributions become separate inferential tables, observed block-composition evidence and reproducible second-seed stability diagnostics.
+- **Research role**: Section 4.3's region bootstrap "keeps countries from the same region together"; Tables 5/B1/B5 report complementary intervals and corrected false-coalition tail probabilities.
+- **Equation coverage**: applies the percentile and plus-one formulas under Task 16 to each pair, while retaining the observed Task 14 country-dispersion statistic separately.
+- **Implementation distinction**: a second registered seed set and numerical Monte Carlo stability rules are reproducibility additions; qualitative sign/significance agreement is not substituted for interval/probability stability.
+- **Validation**: missing stability seeds fail before randomness; metadata-derived regions take precedence when supplied, and their source/version, vocabulary, memberships and actual resampled blocks are retained.
+- **Scope**: inference tables report accepted/rejected counts and sample sizes; 500 valid draws is a publication design requirement, not a guarantee of negligible Monte Carlo error.
+
+### Task 18 — `execute_sweeps`
+
+- **Inputs**: `baseline_config`, frozen `data`; optional `pairs`, `run_ids`, policy-specific `entry_years` and `active_year_callable`, the latter mapping an entry year to an averaging window.
+- **Process**: builds a fixed sweep registry; deep-copies the baseline configuration; changes one registered design axis; rebuilds affected partition/proxy objects and reruns the baseline estimator; records both successful and failed variants.
+- **Outputs**: `SweepSuiteResult` with complete `registry`, selected-run `results`, retained `failures`, successful `effective_designs`, `complete`, registry fingerprint, completion timestamp and notes.
+- **Transformation**: one parent design becomes identified sensitivity branches with explicit effective rosters, factors, windows and lineage; unresolved scientific branches retain failure states instead of synthetic estimates.
+- **Research role**: Sections 6.1–6.2 assess "alternative factors specifications" and reference/donor/horizon/timing changes using the same counterfactual family.
+- **Design coverage**: the full eight-pair registry has 120 runs: five reference variants, three donor variants, five factor variants, one horizon variant and one active-year variant per pair.
+- **Equation coverage**: unchanged branches reuse Equations (4)–(16); reference changes alter the subtraction window in Equation (15), while donor/factor changes alter the inputs to the untreated prediction.
+- **Implementation distinction**: registry identity, deep-copy isolation and one-axis enforcement are engineering safeguards. Late-entry activity windows are constructed locally; no unresolved global activity mask is consulted.
+- **Validation**: checks run selection/uniqueness and parent immutability; `complete` requires every selected registered run to succeed, not merely that a result frame was assembled.
+
+### Task 19 — `execute_robustness_sweeps`
+
+- **Inputs**: `baseline_config`, frozen `data`; optional `pairs`, `expected_ranges` and `run_ids`; numerical diagnostic `threshold` defaults to 1,000.
+- **Process**: executes the reference, donor and factor axes through Task 18; separates their result tables; reconstructs actual donor additions/removals; classifies factor conditioning; reduces successful variants into axis-specific ranges.
+- **Outputs**: `SweepExecutionResult` with `reference_table`, `donor_table`, `factor_table`, `ranges`, `donor_audit`, `stability_summary`, complete `coverage_audit`, fingerprint, completion timestamp and notes.
+- **Transformation**: identified variant estimates become coverage-aware sensitivity intervals and lineage audits; poorly conditioned factor variants remain visible but are excluded from the implementation's headline factor range.
+- **Research role**: Table 6/B2 diagnoses counterfactual sensitivity; the manuscript says GDP-per-capita results depend on "the substantive choice of proxy" and, for richer specifications, "numerical instability".
+- **Range reduction**: for pair $p$ and axis $a$, let $V^{\mathrm{ok}}_{pa}$ be the successful variants admitted to the stated range; this is a sensitivity summary, not a confidence interval.
+
+$$
+\mathrm{Range}_{pa}=\left[\min_{v\in V^{\mathrm{ok}}_{pa}}\hat\theta_{pav},\ \max_{v\in V^{\mathrm{ok}}_{pa}}\hat\theta_{pav}\right].
+$$
+
+- **Implementation distinction**: the 1,000 classification cutoff and omission of diagnostic variants from headline ranges are code reporting policies; manuscript comparisons must identify the exact variant subset rather than compare unlike ranges.
+- **Validation**: failed/unresolved branches are retained in coverage evidence; conclusions about price robustness or output fragility must be supported by the observed successful designs and their coverage.
+
+### Task 20 — `execute_secondary_sweeps`
+
+- **Inputs**: `baseline_config`; `data` with `registry`, `panel`, `lagged` and `coding`; optional `pairs`, `baseline_effects`, `expected_rates`; comparison `tolerance` defaults to 0.001.
+- **Process**: refits actual baseline effects; computes the shorter 2022–2023 horizon, country-specific active-year contrasts and inflation/growth checks; records masks, countries with no active years and differences from baseline.
+- **Outputs**: `SecondarySweepResult` containing `horizon_table`, `active_year_table`, `rate_table`, `mask_audit`, `exclusions`, `comparison`, fingerprint, completion timestamp and notes.
+- **Transformation**: baseline gaps and annual policy indicators become alternative averaging sets; rates remain the analysis-table fraction forms until converted to percentage-point reporting.
+- **Research role**: Section 5.2 cautions that a positive GDP-per-capita level gap reflects "an accumulated position relative to the counterfactual, not faster post-2022 growth"; timing checks separate active from ever-treated membership.
+- **Active-year incremental rule**: $A_i=\{t\in\mathcal W_2:D_{it}=1\}$, $\mathcal T_A=\{i\in\mathcal T^*:|A_i|>0\}$; each admitted country contributes equally regardless of its active-year count.
+
+$$
+\hat\theta_A=\frac1{|\mathcal T_A|}\sum_{i\in\mathcal T_A}\left[\frac1{|A_i|}\sum_{t\in A_i}\hat g_{it}-\frac1{|R|}\sum_{t\in R}\hat g_{it}\right].
+$$
+
+- **Implementation distinction**: shortening the reporting horizon does not discard the full donor-factor history; the original gap matrix is preserved. This active-year incremental statistic is distinct from Task 30's wave-level active-year gaps.
+- **Validation**: checks exact masks and roster exclusions, unique rate-outcome coverage, unchanged parent objects and equality to baseline when years, reference and country weights coincide completely.
+
+### Task 21 — `execute_influence_diagnostics`
+
+- **Inputs**: `baseline_config`, frozen `data`; optional `pairs`; `count` defaults to ten for presentation subsets.
+- **Process**: obtains each pair's actual baseline; removes each target from the stored contrast average; removes each donor in turn and refits the entire counterfactual design; computes median, positive share and a 10% trimmed mean.
+- **Outputs**: `InfluenceDiagnosticsResult` with pair-keyed `results`, combined `donor_changes`, `loo_treated`, `distributional`, fingerprint, completion timestamp and notes.
+- **Transformation**: a baseline contrast vector and donor roster become country influence measures; target deletion changes aggregation, while donor deletion changes the factor and all fitted scientific objects.
+- **Research role**: Section 6.3 states "Donor leave-one-out reconstructs the common factor after removing each donor"; Table 8/B4 tests whether an average is driven by individual countries or a positive tail.
+- **Diagnostic formulas**: $d_i$ is the preferred country contrast, $\hat\theta=N_T^{-1}\sum_i d_i$, and $\hat\theta^{(-k)}_{\mathrm{refit}}$ denotes the fully re-estimated donor-deletion result.
+
+$$
+\hat\theta^{(-j)}_T=\frac{\sum_i d_i-d_j}{N_T-1},\qquad \Delta_k=\hat\theta^{(-k)}_{\mathrm{refit}}-\hat\theta,\qquad \mathrm{PositiveShare}=\frac1{N_T}\sum_i\mathbf1\{d_i>0\}.
+$$
+
+- **Implementation distinction**: the trimmed mean removes the floor of 10% of countries from each sorted tail; top-change ties use deterministic ordering. These are diagnostic reductions rather than a replacement estimand.
+- **Validation**: retains full target/donor deletion coverage and signed changes, independently checks parent-input immutability, and reports the actual number of refits rather than only the top-ten subset.
+
+### Task 22 — `execute_influence_tables`
+
+- **Inputs**: `influence` (`InfluenceDiagnosticsResult`) and country `contrasts_by_pair`; `count` defaults to ten, `muted_threshold` to 0.8; optional `expected_ranges`, `expected_max_change` and `expected_distribution`.
+- **Process**: reduces treated deletions to min/max/width and source countries; ranks donor changes by absolute magnitude while retaining signs; identifies the largest change and assembles distributional statistics and manuscript comparisons.
+- **Outputs**: `InfluenceTableResult` with `treated_range`, `top_changes`, `max_change`, `distribution`, reconciliation-ready `combined`, fingerprint, completion timestamp and notes.
+- **Transformation**: full influence-engine artifacts become interpretable reporting tables whose extrema remain traceable to actual deleted countries; the supplied contrast vectors reproduce the baseline means.
+- **Research role**: Table 8/B4 reports how "The median, trimmed mean, and positive share show how widely the country-level effects agree in sign and magnitude".
+- **Reporting reductions**, with $\hat\theta_T^{(-j)}$ and $\Delta_k$ defined under Task 21:
+
+$$
+L=\min_j\hat\theta_T^{(-j)},\qquad U=\max_j\hat\theta_T^{(-j)},\qquad \mathrm{Width}=U-L,\qquad k^*=\operatorname*{arg\,max}_k|\Delta_k|.
+$$
+
+- **Implementation distinction**: the treated deletion range is not a confidence interval; the positive-share threshold of 0.8 is an implementation presentation flag, not a manuscript test of treatment-effect significance.
+- **Validation**: verifies coverage and declared comparison cells, forbids interval semantics for leave-one-out ranges, and retains the baseline, extreme identities and signed donor movements.
+
+### Task 23 — `execute_matching_designs`
+
+- **Inputs**: `baseline_config`, frozen `data` containing `registry`, `panel` and `lagged`; optional `pairs` and `expected_att`; `axes` defaults to high-income and Mahalanobis, `size_M` to five, `tolerance` to 0.001.
+- **Process**: averages eight controls and log real GDP per capita over 2009–2013; restricts both groups strictly above their pooled income median or selects five nearest eligible donors per target with deterministic distance/code tie-breaking.
+- **Outputs**: `MatchingDiagnosticsResult` with pair/design `designs`, actual-roster `summary`, scheme-labelled `balance`, full `design_audit`, fingerprint, completion timestamp and notes; design records retain post-gap and fitted-pre-gap matrices.
+- **Transformation**: pre-treatment characteristics become restricted rosters or donor inclusion-frequency weights; the high-income branch refits the baseline, while the Mahalanobis branch constructs a weighted factor and weighted pooled model.
+- **Research role**: Section 6.2 says the Mahalanobis design "selects the five nearest eligible donors for each treated country" and "weights them by selection frequency"; matching diagnoses observable comparability rather than random assignment.
+- **Matching algebra**: $c_i$ is the nine-characteristic pre-period vector, $\Sigma$ its pooled sample covariance, and $n_j$ the donor's selection count.
+
+$$
+d(i,j)=\sqrt{(c_i-c_j)'\Sigma^+(c_i-c_j)},\qquad w_j=\frac{n_j}{N_TM},\quad M=5,\qquad \bar Y_t^{\mathrm{match}}=\sum_jw_jY_{jt},\qquad \mathrm{SMD}_k=\frac{\bar c_{Tk}-\bar c_{Ck,w}}{\sqrt{(s_{Tk}^2+s_{Ck,w}^2)/2}}.
+$$
+
+- **Timing fidelity**: the repaired Mahalanobis branch reads the eight `_lag1` columns from `lagged` for both the pooled coefficient and loading fits. Each $X_i$ row is $X'_{i,t-1}$ as required by Equations (3), (5)–(10) and Appendix B; absent columns, incomplete or duplicated pre-treatment years, and non-finite fitted inputs are rejected before estimation.
+- **Impact qualification**: with identical factor operators for the two loading fits, fixed outcomes, rosters and donor proxy, and no clipping, Appendix B's projected terms simplify to $\widehat Y_{it}(\infty)=\hat f_t'\hat F^+Y_i$. A timing-only synthetic correction changes the pooled coefficient vector but leaves post-treatment gaps and ATTs unchanged up to floating-point error; the verified specification mismatch does not establish numerical bias in a reported ATT.
+- **Fitted-pre alignment**: the high-income ATT uses the lagged baseline estimator, and its repaired fitted-pre-gap reconstruction selects the same `_lag1` control columns. The plotted pre-period residuals therefore use the regressors of the fitted model; the matched-roster and donor-frequency rules are retained.
+- **Implementation distinction**: donor pooling scales histories by $\sqrt{w_j}$, targets retain weight one; weighted SMD uses frequency-expanded sample variance, with an unweighted effective-donor balance vector also retained. Zero-variance unequal means yield signed infinity, not artificial balance.
+
+### Task 24 — `execute_matching_report`
+
+- **Inputs**: `baseline_config`, frozen `data`; optional `pairs`, `expected_att`, `expected_balance`, already computed `diagnostics`; `size_M` defaults to five and `tolerance` to 0.001.
+- **Process**: verifies supplied Task 23 diagnostics or runs them; reconstructs candidate/effective roster disposition, donor selection counts/weights and full standardized-difference vectors; checks each reported maximum against its vector.
+- **Outputs**: `MatchingReportResult` with `summary`, unique-key `dropouts`, complete `weight_distribution`, long `balance`, scheme-specific `maxima`, fingerprint, completion timestamp and notes.
+- **Transformation**: matched design artifacts become an auditable reporting package; zero-frequency candidate donors remain in the weight distribution even though they do not enter the fitted donor roster.
+- **Research role**: Table B3 documents "the complete balance vector" and "the donor-selection frequencies used in the Mahalanobis design"; Table 7 contrasts improved comparability with the broad baseline pool.
+- **Report identities**: with $p$ identifying the pair/design/weighting scheme and $k$ its balance covariate,
+
+$$
+\mathrm{MaxAbsSMD}_{p}=\max_k|\mathrm{SMD}_{pk}|,\qquad \sum_jn_j=N_TM,\qquad w_j=\frac{n_j}{N_TM},\qquad \sum_jw_j=1.
+$$
+
+- **Implementation distinction**: sample/frequency variance conventions and zero-dispersion states accompany every balance result; comparison targets are descriptive, not gates establishing causal identification or randomized balance.
+- **Timing consistency**: reporting consumes Task 23's repaired lagged-control fits and aligned fitted-pre residuals; its lineage and reduction checks retain the actual rosters, weights and scientific products of those executed designs.
+
+### Task 25 — `build_cell_ledger`
+
+- **Inputs**: raw commodity-cell DataFrame `raw`; optional `retry_records`, `exclusions` and per-series `expected_counts`; default exclusions cover AUT/DEU/POL/TUR Russian-gas cells in both exposure windows.
+- **Process**: classifies cells using untouched raw values, individual-query success and confirmation of HS reporting; resolves dispositions; audits individual-request recoveries and priority pipeline-gas exclusions.
+- **Outputs**: `CellLedgerResult` with classified `ledger`, status/disposition `counts`, `reclassifications`, keyed `exclusions`, fingerprint, construction timestamp and notes.
+- **Transformation**: ambiguous API absence becomes positive, verified-zero or missing status with independent coverage evidence; retry records explain changed classifications without erasing the original query state.
+- **Research role**: Appendix A.5 requires that "an absent API row is not automatically treated as zero trade" and distinguishes missing multi-country rows from successful individual-country requests.
+- **Classification rule**: a finite importer-reported value above zero is positive; a finite numeric zero becomes verified zero only with both successful individual querying and confirmed HS reporting. An absent/null value remains missing in this callable until source/retry processing supplies the required numeric value and evidence.
+- **Equation boundary**: no exposure ratio is calculated; this ledger supplies the verified primitive-cell status needed before Equations (17), (A1) and (A2).
+- **Implementation distinction**: pipeline-gas priority exclusions are explicit country/series/window keys and remain distinct from macro-panel eligibility and the later mechanism-universe restriction.
+- **Validation**: status/disposition accounting is exhaustive, retained/rejected raw values remain unchanged, retry transitions are auditable and supplied per-series counts must reconcile.
+
+### Task 26 — `construct_exposure_primitives`
+
+- **Inputs**: classified `ledger`, exporter `mirror_block`, supplied-audit `numerator`, world-gas `totals` and raw-audit `primitives`; optional `exclusions`, `expected_completions`, authoritative `nominal_gdp`; defaults `barrier` 2013–2018, `maximum_gap` two, `minimum_anchors` three and count `tolerance` zero.
+- **Process**: derives Russian flows from ledger/mirror lineage and reconciles supplied audits; retains importer positives; corrects deficient gas totals using targeted exporter totals; completes three trade primitives separately within each window and joins authoritative GDP afterward.
+- **Outputs**: `ExposureConstructionResult` with `recovered`, denominator trigger/source audit `denominator`, `completed`, `imputation_ledger`, `counts`, fingerprint, construction timestamp and notes.
+- **Transformation**: screened monetary trade cells become recovered/completed Russian gas, world gas and Russian non-gas energy; GDP is neither interpolated nor replaced by a trade-series proxy.
+- **Research role**: Appendix A.5 states "Importer-reported positives always have priority" and "no interpolation crosses the 2013--2018 gap"; it reports 37 primitive imputations: 13 Russian gas, 13 world gas and 11 non-gas energy.
+- **Completion algebra**: for internal missing $t$ between observed years $a<b$, use $z=\log(1+x)$; one-year edge extrapolation requires three anchors and median adjacent log growth clipped to observed growth's 5th/95th percentiles.
+
+$$
+z_t=z_a+\frac{t-a}{b-a}(z_b-z_a),\qquad \widetilde x_t=\max\{0,\exp(z_t)-1\},\qquad \widetilde h=\operatorname{clip}\!\left(\operatorname{median}(\Delta z),q_{0.05},q_{0.95}\right).
+$$
+
+- **Denominator discipline**: substitute exporter totals only for a missing importer total, a non-positive total despite positive Russian trade, or a total below a mirror-recovered numerator; retained cells require $0\le\mathrm{RussianGas}\le\mathrm{WorldGas}$.
+- **Validation**: the two four-year windows never share anchors; Russian gas is not imputed for the four priority countries; observed/rejected lineage, raw-audit reconciliation and supplied completion counts must hold. Production requires WDI `NY.GDP.MKTP.CD` GDP rows.
+
+### Task 27 — `construct_exposure_ratios`
+
+- **Inputs**: completed `components`, authoritative `completion_ledger`, exposure `windows`, `mechanism_universe`; `excluded_countries` defaults to AUT/DEU/POL/TUR; optional `expected_counts` distinguishing construction passes from regression admission.
+- **Process**: reconstructs ratio-specific yearly components and imputation counts; computes window ratios of sums; applies strict/extended coverage independently by ratio; intersects with the mechanism universe and standardizes using admitted-country sample moments.
+- **Outputs**: `ExposureRatioResult` containing raw `ratios`, reproducible yearly `components`, ratio-specific `sample_mask`, `standardized` values with moments/sample identity, `counts`, fingerprint, timestamp and notes.
+- **Transformation**: separately completed monetary numerators and denominators become dimensionless exposures; ratios themselves are not interpolated and cannot transfer coverage from gas share to total energy/GDP.
+- **Research role**: Appendix A.5 says "Ratios are not themselves interpolated". Construction covers 129 countries; regression admission intersects the 126-country universe excluding Russia, Belarus and Ukraine.
+- **Equations (A1)–(A2), consistent with Equation (17)**: Russian non-gas energy comprises coal, crude oil and refined petroleum; $E$ is standardized separately within each actual window/rule/ratio sample $S$ using sample SD.
+
+$$
+\mathrm{GasShare}_{iw}=\frac{\sum_{t\in w}\mathrm{RussianGas}_{it}}{\sum_{t\in w}\mathrm{WorldGas}_{it}},\qquad \mathrm{EnergyGDP}_{iw}=\frac{\sum_{t\in w}(\mathrm{RussianNonGas}_{it}+\mathrm{RussianGas}_{it})}{\sum_{t\in w}\mathrm{GDP}_{it}},\qquad E^{z}_{iw}=\frac{E_{iw}-\bar E_{w,S}}{s_{w,S}}.
+$$
+
+- **Coverage algorithm**: strict requires at least three usable years and at most one imputation for each required component; extended requires at least two usable years and at most two imputations; both exclude the four pipeline-priority countries.
+- **Implementation distinction**: standardization uses sample variance (`ddof` one) with explicit sample fingerprints; construction and mechanism counts are separately audited, preventing construction coverage from being reported as regression sample size.
+- **Actual summation boundary**: when a required component remains missing, the code restricts numerator and denominator to the same stored common-finite-year subset of $w$, independently for each ratio. The displayed manuscript formulas use $w$; partial-window reproduction must reconcile this additional year-selection convention.
+
+### Task 28 — `execute_heterogeneity_suite`
+
+- **Inputs**: frozen `panel`, one `outcome`, keyed `exposures`, annual `sanction_indicators`, policy/outcome-specific `donor_codes`; `specifications` defaults to six registered designs; optional `expected_slopes`; `tolerance` defaults to 0.001.
+- **Process**: selects the specification's ratio/window/rule sample and actual policy donor roster; consumes Task 27's sample-standardized exposures; forms three post-2022 interactions; partials out country intercepts and heterogeneous donor-mean loadings or alternative two-way fixed effects; fits OLS with country-clustered covariance.
+- **Outputs**: `HeterogeneityResult` with scalar `coefficients`, full `covariance`, fitted `statistics` including ranks/sample counts/CR1 correction and provenance, fingerprint, construction timestamp and notes.
+- **Transformation**: macro outcomes, predetermined exposure and coalition membership become conditional exposure gradients, separate from the donor-imputation ATT; rate fractions are restored to annual percentage points and lagged controls are omitted.
+- **Research role**: Section 7 estimates "exposure gradients rather than as formal mediation"; all years before 2022 form the omitted period, rather than the preferred ATT reference alone.
+- **Equation (18)**, where $S_i$ is the policy membership indicator, $P_t=\mathbf1\{2022\le t\le2024\}$ and $E_{iw}$ denotes standardized exposure in the fitted sample:
+
+$$
+Y_{it}=\mu_i+\lambda_i\bar Y_{\mathcal C,t}+\beta_1(S_iP_t)+\beta_2(E_{iw}P_t)+\beta_3(S_iE_{iw}P_t)+u_{it},\qquad \mathrm{SE}(\hat\beta_2+\hat\beta_3)=\sqrt{\widehat V_{22}+\widehat V_{33}+2\widehat V_{23}}.
+$$
+
+- **Implementation distinction**: CR1 scales the country-score sandwich by $G/(G-1)\times(n-1)/(n-r)$ using full absorbed/design rank; scalar probabilities use a normal reference, and residualized fits/covariances are checked against an explicit full design. Exposure is not restandardized here; supplied values must retain Task 27's exact-sample convention.
+- **Interpretation**: $\beta_2$ is the non-policy slope, $\beta_3$ its policy-group difference, and $\beta_2+\beta_3$ the total coalition slope; $\beta_1$ is the differential at mean exposure, not the baseline incremental ATT.
+
+### Task 29 — `execute_heterogeneity_regressions`
+
+- **Inputs**: `panel`, `exposures`, `sanction_indicators`, policy-specific `donor_codes`; `outcomes` defaults to the four analytical outcome identifiers; `specifications` to the exact six designs; `required_invariants` defaults to false; optional `expected_estimates`; `tolerance` defaults to 0.001.
+- **Process**: runs Task 28 once per outcome; verifies coefficient/covariance identities; assembles strict near-prewar and pre-Crimea Table 10 panels and the full B7 specification sweep; evaluates directional/significance findings and compares exposure windows.
+- **Outputs**: `HeterogeneityExecutionResult` with `baseline_table`, `pre_crimea_table`, `table10`, `sweep_table`, `covariance_table`, `invariant_checks`, `window_comparison`, fingerprint, timestamp and notes.
+- **Transformation**: four outcome-specific mechanism suites become 96 reported scalar rows and 216 covariance entries across six designs; Table 10 retains 32 scalar rows, separately identifying $\beta_1$, $\beta_2$, $\beta_3$ and $\beta_2+\beta_3$.
+- **Research role**: Table B7 examines "the exposure window, sample-coverage rule, estimator, policy definition, and exposure measure" and distinguishes price levels, inflation, output levels and annual growth.
+- **Design coverage**: six designs are near-prewar strict energy/GDP, pre-Crimea strict energy/GDP, pre-Crimea extended energy/GDP, near-prewar TWFE, strict direct arming and near-prewar gas share.
+- **Equation coverage**: Equation (18) and the full-covariance slope formula under Task 28; the TWFE branch replaces the heterogeneous donor-mean term with common year effects only in that alternative design.
+- **Implementation distinction**: four outcomes and all six designs are mandatory exactly once, despite ordering flexibility. Directional findings are descriptive; `required_invariants` cannot turn a desired empirical sign into a mathematical identity.
+- **Validation**: missing designs, duplicate output keys or violated mathematical/dataflow identities are errors; narrative sign/significance failures are retained as findings rather than suppressed or used to overwrite estimates.
+
+### Task 30 — `execute_direct_arming_pipeline`
+
+- **Inputs**: `baseline_config`, frozen `data`, arming `entry_years`, authoritative versioned `region_map`; `outcomes` defaults to log CPI/log real GDP per capita; optional `outcome_removals`, explicit registered `seeds`, `wave_references`, `expected_baseline`; `bootstrap_replicates`/`placebo_replicates` default to, and are fixed at, 500; `tolerance` defaults to 0.001.
+- **Process**: resolves outcome-specific arming target/donor designs and removals; refits baseline level/incremental effects; executes all resampling branches on those same rosters; constructs active-year wave-level gaps and separately named reference-adjusted contrasts.
+- **Outputs**: `DirectArmingResult` with `baseline`, `inference`, diagnostic `interpretation`, `active_year`, `exclusions`, canonical `design_audit`, fingerprint, construction timestamp and notes.
+- **Transformation**: the narrower documentary coalition and its eligible donors become a fully re-estimated boundary check, not an isolated causal effect of military aid; every inference branch is tied to the same outcome-specific design.
+- **Research role**: Section 6.4 calls this "a boundary check" for a narrower coalition; 28 of the 29 arming countries also impose strict sanctions, and only four arming countries are active before 2022.
+- **B6 active-year level statistic**: for wave $W$, $A_i(W)=\{t\in W:t\ge e_i\}$ and $\mathcal T_A(W)=\{i\in\mathcal T^*:|A_i(W)|>0\}$.
+
+$$
+\widehat{\mathrm{ATT}}_{A,W}=\frac1{|\mathcal T_A(W)|}\sum_{i\in\mathcal T_A(W)}\frac1{|A_i(W)|}\sum_{t\in A_i(W)}\hat g_{it}.
+$$
+
+- **Implementation distinction**: the formula above is a wave-level gap, not the preferred incremental contrast; when a wave reference is supplied, the latter is stored separately. Placebo probabilities remain diagnostics and do not supply baseline stars.
+- **Validation**: explicit seed identity, 500 valid refits/assignments, authoritative regions, roster/removal lineage and supplied publication cells are checked; baseline log-CPI/GDPpc donor counts are 96/97 with 29 targets.
+
+### Task 31 — `produce_figures_and_tables`
+
+- **Inputs**: pair-keyed `gap_matrices` and `incremental_contrasts`; optional `matched_paths`, `placebo_draws`, `reference_window_estimates`, `table_sources`, `output_dir`, `extra_gaps`, distinct `fitted_pre_gaps`, actual `observed_preferred_att`, versioned `country_geometry` and explicit `overlay_pair`.
+- **Process**: joins fitted 2001–2013 and realized 2014–2024 gaps for graphics; computes equal-country dynamic paths/pointwise ribbons normalized to 2013; builds country choropleths, matched overlays, placebo histograms, reference-window plots and supplied table renderings.
+- **Outputs**: `FigureTableBundle` with reproducible `figure_data`, `tables`, table `latex`, figure `rendered` status/path records, `reproducibility_gaps`, fingerprint, construction timestamp and notes.
+- **Transformation**: frozen scientific outputs become publication data and rendering artifacts; observed placebo markers come from actual preferred ATTs, not from the placebo draw mean, and matched paths come from their independent fits.
+- **Research role**: Figure 4 specifies "Every path is normalized to 2013" and matched paths as lines; Figure B2 specifies "The red line is the observed preferred incremental ATT".
+- **Plotting algebra**: $a_t$ is the mean gap, $s_t$ its cross-country sample SD, and $N$ the fixed target count; the implementation shifts a level-gap pointwise ribbon by the same 2013 mean.
+
+$$
+a_t=\frac1N\sum_i\hat g_{it},\qquad p_t=a_t-a_{2013},\qquad [\ell_t,u_t]=\left[a_t-1.96\frac{s_t}{\sqrt N}-a_{2013},\ a_t+1.96\frac{s_t}{\sqrt N}-a_{2013}\right].
+$$
+
+- **Implementation distinction**: this ribbon does not estimate the variance of $\hat g_{it}-\hat g_{i,2013}$ or a simultaneous band; pre-2014 graphics show fitted residual gaps, not conventional event-study leads. Figure inputs require aligned chronological columns.
+- **Validation**: missing fitted-pre data, versioned geometry or rendering-stack dependencies are recorded as production gaps; table composition and requested figure data must remain traceable to supplied scientific artifacts.
+
+### Task 32 — `execute_reconciliation_audit`
+
+- **Inputs**: `reported`, `reproduced`, independent `declared_keys`, explicit `unreproduced`; optional `layer_chains`, `counterfactual_callable`, `imputation_callables`, `eligibility_callable`, `robustness_frame`, `study_config`, `declared_facts`, `archive_artefacts`, `manuscript_universe`, live `probe_registry`, `archive_state`, `archive_root`; defaults `version_tag` to `v1.0.0-frozen`, `tolerance` to 0.001 and `require_invariants` to true.
+- **Process**: verifies the independent inventory of Tables 3–10, A1–A8 and B1–B7; splits all 418 cells into comparisons or explicit gaps; compares units/precision/procedures; localizes divergences; executes registered perturbation scenarios; validates archive plans, atomically freezes absent approved live-state files and verifies their bytes/provenance.
+- **Outputs**: `ReconciliationReport` with `comparisons`, `gaps`, `localization`, `invariants`, `provenance`, `manifest`, fingerprint, timestamp, notes, `status`, granular `blockers` and `coverage`.
+- **Transformation**: reproduced statistics and source/transform/model lineage become a cell-by-cell attribution record and completeness certificate; independently pinned inventory/probe evidence prevents caller-supplied success claims from self-certifying.
+- **Research role**: operationalizes the Appendix A requirement that "Neither treatment indicators nor estimated treatment effects enter the coverage rules or the completion procedures" and Step 3's target-input exclusion boundary.
+- **Three tested boundaries**: perturbing target post-treatment realizations must leave its untreated prediction unchanged; perturbing policy information must leave eligibility/completion unchanged; running robustness branches must preserve baseline parent state/results.
+- **Comparison rules**: numerical publication cells use their stated units, displayed rounding interval and recorded numerical/Monte Carlo allowance; categorical cells require their declared exact identity. Earliest-divergent-layer attribution requires actual layer evidence, not a guessed cause.
+- **Implementation distinction**: the 418-cell inventory, ten-artifact archive contract, independently pinned probes and certificate are engineering requirements. `require_invariants` false cannot waive the three scientific invariants; the nominal 0.001 tolerance is not a universal manuscript precision rule.
+- **Equation boundary**: audits results of the preceding scientific equations and computation layers; it introduces no new ATT, exposure-gradient or causal-identification formula.
+- **Failure/completion behavior**: malformed inventories/probes/provenance claims raise errors; well-formed unresolved inputs yield `incomplete`. A `complete` report requires every cell, invariant, provenance fact and actual archive artifact to pass verification.
+
+### Task 33 — `orchestrate_study_pipeline`
+
+- **Inputs**: one `data` mapping; `study_config` and the ten-frame `sources` mapping are mandatory. It also carries the stage-specific scientific inputs, registered seeds, independent manuscript/probe evidence and replication-archive dependencies required by the requested production execution.
+- **Process**: validates preflight requirements and the fixed 31-stage registry; executes stages in dependency order; threads live artifacts into later stages; records completion, skips, failures and timings; checks live content digests, reconciliation coverage and self-contained archive evidence.
+- **Outputs**: a dictionary containing available per-stage artifacts plus `pipeline_summary`, `pipeline_state`, `pipeline_digest`, `pipeline_notes`, `pipeline_status` and `pipeline_blockers`.
+- **Transformation**: supplied source/configuration/provenance inputs become a connected study state and an explicit completion verdict; missing dependencies remain named blockers and skipped/failed stages rather than disappearing from the summary.
+- **Research role**: integrates the Appendix A construction sequence and Sections 4–7 estimation, diagnostics and mechanisms; the paper describes a "replicable two-wave policy-evaluation framework" but states that its submission "does not include a replication archive".
+- **Equation coverage**: delegates Equations (1)–(18), (A1)–(A2) and the printed Appendix B computational formulas to their respective stages; the orchestration layer estimates no new economic coefficient.
+- **Completion contract**: all 31 stages must complete in registry order, with no skipped/failed stage or remaining blocker; all 418 manuscript cells, all three genuine design-invariant demonstrations, verified provenance and the complete actual archive must satisfy reconciliation.
+- **Implementation distinction**: 33 principal task definitions do not imply 33 runtime stages; Task 16 runs inside Task 17. Content-sensitive hashing and readiness evidence certify execution identities and documented checks, not the maintained causal assumptions.
+- **Current methodological limit**: this discussion is a source/interface audit, not a full empirical run. Task 23's two control-timing discrepancies are repaired and checked with synthetic inputs; those checks do not establish full manuscript reproduction or verify maintained causal assumptions.
