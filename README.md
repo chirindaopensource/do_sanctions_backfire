@@ -185,7 +185,7 @@ Completion is a deterministic, single-pass, audited hierarchy:
 For a policy indicator $D_{it}$:
 
 $$
-\mathcal{T}=\lbrace i:\max_t D_{it}=1\rbrace,\qquad \mathcal{C}=\lbrace i:\max_t D_{it}=0\rbrace,\qquad \mathcal{T}^{*}\subseteq\mathcal{T},\qquad \mathcal{C}_Y\subseteq\mathcal{C} \qquad (1)
+\mathcal{T}=\lbrace i:\max_t D_{it}=1\rbrace,\qquad \mathcal{C}=\lbrace i:\max_t D_{it}=0\rbrace,\qquad \mathcal{T}^{\ast}\subseteq\mathcal{T},\qquad \mathcal{C}_Y\subseteq\mathcal{C} \qquad (1)
 $$
 
 $$
@@ -241,7 +241,7 @@ $$
 **Step 5, equally weighted ATT.**
 
 $$
-\widehat{\mathrm{ATT}}_{\mathcal W}=\frac{1}{N_T}\sum_{i\in\mathcal T^{*}}\Big(\frac{1}{|\mathcal W|}\sum_{t\in\mathcal W}\hat g_{it}\Big),\qquad N_T=|\mathcal T^{*}| \qquad (12)
+\widehat{\mathrm{ATT}}_{\mathcal W}=\frac{1}{N_T}\sum_{i\in\mathcal T^{\ast}}\Big(\frac{1}{|\mathcal W|}\sum_{t\in\mathcal W}\hat g_{it}\Big),\qquad N_T=|\mathcal T^{\ast}| \qquad (12)
 $$
 
 Every country gets equal weight regardless of population or economic size.
@@ -261,7 +261,7 @@ $$
 $$
 
 $$
-\widehat{\mathrm{ATT}}_{\mathrm{Inc},2}=\frac{1}{N_T}\sum_{i\in\mathcal T^{*}}\Big[\frac{1}{3}\sum_{t=2022}^{2024}\hat g_{it}-\frac{1}{3}\sum_{t=2019}^{2021}\hat g_{it}\Big] \qquad (15)
+\widehat{\mathrm{ATT}}_{\mathrm{Inc},2}=\frac{1}{N_T}\sum_{i\in\mathcal T^{\ast}}\Big[\frac{1}{3}\sum_{t=2022}^{2024}\hat g_{it}-\frac{1}{3}\sum_{t=2019}^{2021}\hat g_{it}\Big] \qquad (15)
 $$
 
 Interpretation rests on the **stable-gap continuation** assumption: without the escalation, each country's gap would have stayed at its 2019–2021 level. The assumption allows the 2014 regime to have left a persistent gap but rules out further drift after 2021.
