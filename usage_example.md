@@ -1,12 +1,12 @@
 ## **Usage Example**
 
-This guide uses the current `orchestrate_study_pipeline` interface for *Do Sanctions Backfire? New Evidence on the Macroeconomic Effects of Supporting Ukraine* (Vicente Rios, Izaskun Barba and Lisa Gianmoena, 2026, as supplied in `latex_context.txt`). Python implementation author: **CS Chirinda**.
+This guide uses the current `orchestrate_study_pipeline` interface for *Do Sanctions Backfire? New Evidence on the Macroeconomic Effects of Supporting Ukraine* (Vicente Rios, Izaskun Barba and Lisa Gianmoena, 2026). Python implementation author: **CS Chirinda**.
 
 The example creates all ten raw DataFrames, reads the existing `config.yaml` into the plain dictionary `config`, and calls the actual study interface. It preserves the notebook's mathematical specification, configuration settings and provenance gates. The supplied production configuration presently fails preflight on three unresolved source-evidence groups; the executable example reports that rejection. No estimator stage, publication figure or empirical replication is claimed for that blocked call.
 
 **Assumptions and execution requirements.**
 
-1. Every research callable and helper already lives in the **single executed notebook** `do_sanctions_backfire_remediated_draft.ipynb`. Execute its 36 code cells, in order, before appending the example cells. **No Python task-module folder is imported or required.** This guide does not load the older `_remediated_two` notebook.
+1. Every research callable and helper already lives in the **single executed notebook** `do_sanctions_backfire_draft.ipynb`. Execute its 36 code cells, in order, before appending the example cells. **No Python task-module folder is imported or required.**
 2. The working directory is that notebook's folder. `config.yaml` already exists there. The example reads it; it does not recreate or modify it.
 3. The code uses Python 3.10 or newer syntax and the notebook's installed dependencies. The verification interpreter was Python 3.13. The example-specific imports are NumPy, pandas and **ruamel.yaml**. NumPy's private, seeded PCG64 data-generating model is the permitted alternative to Faker; country identities are fixed rather than randomly invented.
 4. Copy the Python fences into new cells **in their displayed order**. The complete source tables and helper definitions are embedded below. Configured output destinations remain `results` and `replication_archive`; a genuinely ready invocation may write there. The verified preflight rejection writes no study outputs.
