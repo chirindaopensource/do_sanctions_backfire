@@ -2337,7 +2337,7 @@ $$
 d_i=\frac1{|W_2|}\sum_{t\in W_2}\widehat g_{it}
 -\frac1{|R|}\sum_{t\in R}\widehat g_{it},\qquad
 \widehat{ATT}^{\mathrm{Inc}}_2=\frac1{N_T}\sum_i d_i,\qquad
-\widehat{SE}_{\mathrm{CD}}=\frac{\operatorname{sd}(d_i)}{\sqrt{N_T}},\quad
+\widehat{SE}_{\mathrm{CD}}=\frac{\mathrm{sd}(d_i)}{\sqrt{N_T}},\quad
 \mathrm{df}=N_T-1.
 $$
 
@@ -2634,10 +2634,6 @@ Scheduler stages executed by this top-level call: 0
 ```
 
 The exact exception message displayed by the code includes every unresolved field path. The separate authority registration is also pending; it becomes a granular study blocker after configuration readiness is resolved. Missing external objects, independently authenticated table/invariant/vintage authorities and archive files cannot be converted into a complete result by passing dummy objects. The synthetic policy ledger's `TEST_ONLY` archive strings do not resolve documentary provenance.
-
-**Verification scope.** Every executable Python fence in this document is run in order against the actual draft notebook, with the supplied YAML file. The raw schema, retained-grid counts, wide/long closure, trade-status counts and expected preflight rejection are verified. The notebook and configuration bytes are checked for preservation. Focused unit tests cover adversarial inputs, generation reproducibility, rate/level coherence, trade mirror priority, protected gas missingness and the early data-engineering outputs. Verification does **not** certify the empirical 418-cell reconciliation or perform 500-draw inference. Machine-readable results are stored in `records/evidence/usage_example_verification.json` and `records/evidence/usage_example_tests.xml`.
-
-**Notebook source SHA-256:** `7bc969018ce580cfd297565c9fe246abbe2aff86195362ba57de3a3835a4913b`.
 
 ### **Summary of the Execution Flow**
 
