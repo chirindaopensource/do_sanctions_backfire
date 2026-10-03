@@ -1,0 +1,123 @@
+# =============================================================================
+#
+#  Do Sanctions Backfire? New Evidence on the Macroeconomic Effects of
+#  Supporting Ukraine
+#
+#  Two-Wave Common Correlated Effects Imputation for Coalition Burden
+#  Price Levels, Real Output, and Russian-Energy Exposure Gradients
+#
+#  Third-Party Runtime Requirements and Dependency Scope
+#
+#  This file lists the third-party distributions required by the audited
+#  Python workflow implementing the analytical framework in "Do Sanctions
+#  Backfire? New Evidence on the Macroeconomic Effects of Supporting Ukraine"
+#  by Vicente Rios, Izaskun Barba, and Lisa Gianmoena (2026). The workflow
+#  reconstructs untreated country trajectories, distinguishes the 2014
+#  sanctions wave from the 2022 escalation, and quantifies coalition burden
+#  separately through consumer-price and real-GDP-per-capita outcomes.
+#
+#  Its reproducible estimates and sensitivity diagnostics provide an
+#  analytical evidence layer for compensation, emergency procurement,
+#  infrastructure prioritisation, and coalition-cohesion assessments.
+#  Policy allocation rules require a separately specified decision layer.
+#
+#  Dependency-to-Method Mapping:
+#  - numpy: array operations, factor projections, the residual-maker
+#    matrix, SVD-based Moore-Penrose pseudoinverses (np.linalg.pinv, svd,
+#    lstsq, solve, matrix_rank, eigvalsh), condition-number checks, and
+#    seed-controlled PCG64 draws via np.random.SeedSequence/default_rng for
+#    the country-history bootstrap, region-block bootstrap, and size-matched
+#    placebo assignments.
+#  - pandas: country-year panels, raw-source ingestion, eligibility and
+#    completion ledgers, DataFrame.attrs provenance metadata, and output
+#    tables.
+#  - scipy: scipy.stats.t for country-dispersion Student-t inference with
+#    N_T - 1 degrees of freedom, and scipy.stats.linregress for the bounded
+#    local-trend backcasts used in control completion and outcome repair.
+#  - matplotlib: headless (Agg) figure production; matplotlib.colormaps
+#    and matplotlib.axes.Axes are used by the event-study and choropleth
+#    renderers.
+#  - geopandas: imported unconditionally by the import cell; supplies the
+#    GeoDataFrame geometry branch of the European (Figure 3) and world
+#    (Figure B1) choropleths.
+#
+#  Runtime Dependencies Not Named in the Import Cell:
+#  - pyarrow: required by pandas.DataFrame.to_parquet, which persists a
+#    country-dispersion inference ledger (Task 14).
+#  - Jinja2: required by pandas.DataFrame.to_latex, which renders the
+#    publication tables (Task 31).
+#  These are loaded lazily by pandas, so the import cell succeeds without
+#  them; the corresponding pipeline stages fail when they are absent.
+#
+#  Standard-Library Modules (no installation required):
+#  builtins, copy, dis, hashlib, importlib.util, inspect, itertools, json,
+#  logging, math, os, re, sys, tempfile, dataclasses, datetime, decimal,
+#  pathlib, statistics, types, typing.
+#
+#  Version Policy:
+#  Lower bounds reflect the features the notebook calls. No upper bounds
+#  are imposed. This repository has no locked author environment, and the
+#  manuscript provides no replication archive. For an archival
+#  reproduction, freeze the exact resolved set with `pip freeze` and record
+#  it alongside the WDI vintage, WGI release, Comtrade HS codes, and seeds
+#  declared in config.yaml.
+#
+#  Python Interpreter:
+#  Python >= 3.10. The notebook kernel metadata records Python 3.11.7; the
+#  usage example was verified with Python 3.13.
+#
+#  Paper Reference:
+#  Rios, V., Barba, I., & Gianmoena, L. (2026).
+#  Do Sanctions Backfire? New Evidence on the Macroeconomic Effects of
+#  Supporting Ukraine. E-journal submission: 11 September 2026.
+#  arXiv:2609.12387. https://arxiv.org/abs/2609.12387
+#
+#  Source notebook: do_sanctions_backfire_draft.ipynb
+#  Repository: https://github.com/chirindaopensource/do_sanctions_backfire
+#  Author: CS Chirinda
+#  License: MIT
+#
+#  Installation:
+#      python -m pip install -r requirements.txt
+#
+# =============================================================================
+
+# =============================================================================
+# Core numerical and data-manipulation stack (import cell).
+# =============================================================================
+
+# Array algebra, SVD pseudoinverses, rank/condition diagnostics, PCG64 draws.
+numpy>=1.23.2
+
+# Country-year panels, ledgers, DataFrame.attrs provenance, output tables.
+pandas>=2.0.0
+
+# scipy.stats.t (Student-t inference) and scipy.stats.linregress (backcasts).
+scipy>=1.10.0
+
+# =============================================================================
+# Visualisation and geographic rendering (import cell).
+# =============================================================================
+
+# Headless Agg rendering, matplotlib.colormaps registry, figure output.
+matplotlib>=3.6.0
+
+# GeoDataFrame geometry for the European and world choropleths.
+geopandas>=0.14.0
+
+# =============================================================================
+# Runtime serialisation back-ends invoked through pandas.
+# =============================================================================
+
+# Parquet engine for pandas.DataFrame.to_parquet (Task 14 ledger output).
+pyarrow>=10.0.1
+
+# Template engine for pandas.DataFrame.to_latex (Task 31 table rendering).
+Jinja2>=3.1.2
+
+# =============================================================================
+# Usage example only (not imported by the research notebook).
+# =============================================================================
+
+# YAML 1.2 loader used by usage_example.md to read config.yaml.
+ruamel.yaml>=0.17.21
