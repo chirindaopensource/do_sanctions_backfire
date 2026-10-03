@@ -462,19 +462,32 @@ def plan_trade_statuses(
 ) -> dict[tuple[str, int, str], str]:
     """Allocate a reproducible, internally consistent trade-coverage fixture.
 
-    Inputs are the loaded configuration and its 129-country descriptive
-    roster.
     The process separates the two four-year windows, fixes the four
-    unresolved
-    pipeline-gas countries and Russia as gas-coverage failures, then places
-    recoverable single gaps and unrecoverable multi-year gaps independently
-    of
-    policy membership. It allocates exactly the configured
-    positive/zero/missing
-    totals and keeps every positive Russian gas flow inside a positive world
-    denominator. Outputs are statuses keyed by country, year and primitive.
-    Raises ValueError on an incompatible roster or impossible count
-    allocation.
+    unresolved pipeline-gas countries and Russia as gas-coverage failures,
+    then places recoverable single gaps and unrecoverable multi-year gaps
+    independently of policy membership. It allocates exactly the configured
+    positive/zero/missing totals and keeps every positive Russian gas flow
+    inside a positive world denominator.
+
+    Parameters
+    ----------
+    config : Mapping[str, Any]
+        The loaded configuration.
+    retained : tuple[str, ...]
+        The configuration's 129-country descriptive roster.
+
+    Returns
+    -------
+    dict[tuple[str, int, str], str]
+        Statuses keyed by country, year and primitive.
+
+    Raises
+    ------
+    ValueError
+        On an incompatible roster or impossible count allocation.
+
+    Notes
+    -----
     No query or documentary verification is claimed by these artificial
     flags.
     """
@@ -683,22 +696,37 @@ def generate_study_sources(
 ) -> dict[str, pd.DataFrame]:
     """Generate all ten raw source frames without altering study parameters.
 
-    Inputs are config.yaml's parsed dictionary and a nonnegative 64-bit
-    seed.
     A local NumPy PCG64 generator supplies coherent price/GDP histories,
-    annual
-    rates, eight WDI control primitives, governance levels, and
-    current-dollar
-    trade/GDP values. Country names follow the supplied Table A6; the seven
-    region labels are fixed fixture conventions. Table A4 entry years are
-    retained, but every policy document and archive reference is TEST_ONLY.
-    Raw missingness reproduces the prescribed retained-grid counts; no
-    outcome
-    completion, logarithm, lag, eligibility selection or estimator runs
-    here.
-    Outputs are exactly the ten named, typed and uniquely keyed DataFrames.
-    Raises TypeError for a malformed configuration/seed and ValueError for a
-    contradictory roster, registry, temporal declaration or primitive count.
+    annual rates, eight WDI control primitives, governance levels, and
+    current-dollar trade/GDP values. Country names follow the supplied
+    Table A6; the seven region labels are fixed fixture conventions.
+    Table A4 entry years are retained, but every policy document and archive
+    reference is TEST_ONLY. Raw missingness reproduces the prescribed
+    retained-grid counts; no outcome completion, logarithm, lag, eligibility
+    selection or estimator runs here.
+
+    Parameters
+    ----------
+    config : Mapping[str, Any]
+        The parsed dictionary of config.yaml.
+    seed : int, default 20261003
+        A nonnegative 64-bit seed.
+
+    Returns
+    -------
+    dict[str, pd.DataFrame]
+        Exactly the ten named, typed and uniquely keyed DataFrames.
+
+    Raises
+    ------
+    TypeError
+        For a malformed configuration/seed.
+    ValueError
+        For a contradictory roster, registry, temporal declaration or
+        primitive count.
+
+    Notes
+    -----
     Synthetic agreement with counts is not recovery of a WDI/WGI vintage.
     """
     # Reject inputs when this condition implies: config must be a mapping
@@ -1785,21 +1813,32 @@ def generate_study_sources(
 def load_usage_config(path: str | Path = "config.yaml") -> dict[str, Any]:
     """Read the existing YAML 1.2 configuration without weakening readiness.
 
-    Input is a filename in the notebook's working directory or an explicit
-    path.
     The process rejects duplicate YAML keys, safely parses the mapping, and
-    uses
-    the notebook's section/binding validators to detect contradictory
-    execution
-    declarations. Output is the plain dict named config by the calling cell.
+    uses the notebook's section/binding validators to detect contradictory
+    execution declarations.
+
+    Parameters
+    ----------
+    path : str | Path, default 'config.yaml'
+        A filename in the notebook's working directory or an explicit path.
+
+    Returns
+    -------
+    dict[str, Any]
+        The plain dict named config by the calling cell.
+
+    Raises
+    ------
+    FileNotFoundError, TypeError
+        Configuration errors, not study results.
+    Parser errors and the notebook's binding validation exceptions
+        Configuration errors, not study results.
+
+    Notes
+    -----
     This loader deliberately does not resolve evidence gaps, change seeds,
-    move
-    runtime paths, recreate the file, or convert every YAML list into a
+    move runtime paths, recreate the file, or convert every YAML list into a
     tuple.
-    Raises FileNotFoundError, TypeError, parser errors and the notebook's
-    binding
-    validation exceptions; these are configuration errors, not study
-    results.
     """
     # Reject inputs when this condition implies: path must be a nonempty string
     # or pathlib.Path.
@@ -1881,19 +1920,35 @@ def audit_usage_sources(
 ) -> dict[str, Any]:
     """Validate raw-fixture contracts using the actual notebook ingest layer.
 
-    Inputs are the ten generated DataFrames and the unchanged parsed config.
     The process calls Task 1, audits unique keys and wide/long equality,
-    verifies
-    retained-grid raw missingness, positive GDP, documentary entry-year
-    counts,
-    trade statuses and positive-numerator/denominator consistency. Outputs
-    are
-    human-readable shape/coverage tables plus configuration/source
-    fingerprints.
+    verifies retained-grid raw missingness, positive GDP, documentary
+    entry-year counts, trade statuses and positive-numerator/denominator
+    consistency.
+
+    Parameters
+    ----------
+    sources : Mapping[str, pd.DataFrame]
+        The ten generated DataFrames.
+    config : Mapping[str, Any]
+        The unchanged parsed config.
+
+    Returns
+    -------
+    dict[str, Any]
+        Human-readable shape/coverage tables plus configuration/source
+        fingerprints.
+
+    Raises
+    ------
+    TypeError, ValueError
+        On violations.
+    Actual ingest exceptions
+        On violations.
+
+    Notes
+    -----
     This is an isolated input-contract audit, not the top-level stage run or
     certification of source authenticity. It cannot supply readiness tokens.
-    Raises TypeError/ValueError and the actual ingest exceptions on
-    violations.
     """
     # Reject inputs when this condition implies: sources must contain exactly
     # the ten declared names.
@@ -2364,50 +2419,42 @@ def run_study_usage_example(
 ) -> dict[str, Any]:
     """Execute the verified notebook interface and retain honest run status.
 
+    Load config; generate or validate sources; assemble data.study_config
+    and data.sources; audit registered evidence states; invoke the
+    single-argument orchestrate_study_pipeline exactly once. Its runtime
+    binder promotes six configured keys; its 31-stage scheduler owns all
+    estimator dependencies. Preserve a known configuration-readiness
+    rejection as preflight_blocked. Propagate unexpected schema, binding and
+    programming failures.
+
     Parameters
     ----------
-    config_path
+    config_path : str | Path, default 'config.yaml'
         Existing YAML 1.2 configuration, read from the current notebook
-        folder.
-        Default: 'config.yaml'. The file and its study parameters are
-        unchanged.
-    seed
-        Local PCG64 fixture entropy, default 20261003. This controls
-        synthetic
-        inputs only; the configured inference seed registries remain
-        untouched.
-    raw_sources
+        folder. The file and its study parameters are unchanged.
+    seed : int, default 20261003
+        Local PCG64 fixture entropy. This controls synthetic inputs only; the
+        configured inference seed registries remain untouched.
+    raw_sources : Mapping[str, pd.DataFrame] | None, default None
         Optional mapping containing exactly the ten source DataFrames. None
         generates the documented synthetic world. Passing synthetic_sources
         reuses the earlier cells. Authentic raw inputs may be passed
         explicitly.
-    external_inputs
+    external_inputs : Mapping[str, Any] | None, default None
         Optional caller data keyed by income_groups, country_geometry,
         world_geometry, table_sources, table_binding_authority,
         manuscript_universe, declared_facts and layer_chains. Further
-        supported
-        consistency keys are enumerated below. Missing authentic evidence is
-        left missing. No computed artifact or trust pin is manufactured
-        here.
-
-    Process
-    -------
-    Load config; generate or validate sources; assemble data.study_config
-    and
-    data.sources; audit registered evidence states; invoke the
-    single-argument
-    orchestrate_study_pipeline exactly once. Its runtime binder promotes six
-    configured keys; its 31-stage scheduler owns all estimator dependencies.
-    Preserve a known configuration-readiness rejection as preflight_blocked.
-    Propagate unexpected schema, binding and programming failures.
+        supported consistency keys are enumerated below. Missing authentic
+        evidence is left missing. No computed artifact or trust pin is
+        manufactured here.
 
     Returns
     -------
     dict[str, Any]
-        config, sources, input_audit, data, gap_audit, execution_status,
-        exception_type, exception_message and pipeline_result. A blocked
-        call
-        has pipeline_result=None because the scheduler was never entered.
+        Keys config, sources, input_audit, data, gap_audit,
+        execution_status, exception_type, exception_message and
+        pipeline_result. A blocked call has pipeline_result=None because the
+        scheduler was never entered.
         A returned pipeline result retains its own status, blockers and
         digest.
 
@@ -2418,18 +2465,17 @@ def run_study_usage_example(
         YAML.
     ConfigValidationError and notebook-specific exceptions
         Unexpected configuration/implementation failures are propagated;
-        only
-        an explicitly identified evidence-readiness rejection is retained.
+        only an explicitly identified evidence-readiness rejection is
+        retained.
 
     Notes
     -----
     All research callables must already be defined in this notebook
-    namespace.
-    There are no imports from a Python task folder. Synthetic results cannot
-    certify manuscript estimates or a recovered source vintage. This wrapper
-    does not reduce B=M=500 or bypass the independent
-    418-cell/three-invariant
-    and ten-family archive requirements. Implementation author: CS Chirinda.
+    namespace. There are no imports from a Python task folder. Synthetic
+    results cannot certify manuscript estimates or a recovered source
+    vintage. This wrapper does not reduce B=M=500 or bypass the independent
+    418-cell/three-invariant and ten-family archive requirements.
+    Implementation author: CS Chirinda.
     """
     # Set config from the expression below.
     config = load_usage_config(config_path)
