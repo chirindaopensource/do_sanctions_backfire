@@ -288,9 +288,15 @@ This SE treats country contrasts as independent and does **not** propagate first
 
 - a **country-history bootstrap**, which resamples whole country paths and re-estimates the complete design;
 - a **region-block bootstrap**, which resamples World Bank regions;
-- a **size-matched placebo**, which draws false coalitions from never-treated countries. Its tail probability uses the plus-one correction
-  $\hat p=\big(1+\#\lbrace m:|\hat\theta^{(m)}|\ge|\hat\theta^{\mathrm{obs}}|\rbrace\big)/(1+M)$.
-  It is a diagnostic tail probability, not a confidence interval.
+- a **size-matched placebo**, which draws false coalitions from never-treated countries.
+
+The placebo tail probability uses the plus-one correction over $M$ size-matched assignments:
+
+$$
+\hat p=\frac{1+\sum_{m=1}^{M}\mathbf{1}\left[\left|\hat\theta^{(m)}\right|\ge\left|\hat\theta^{\mathrm{obs}}\right|\right]}{1+M}
+$$
+
+It is a diagnostic tail probability, not a confidence interval.
 
 ### 8. Russian-Energy Exposure and the Gradient Regression (Equations 17–18, A1–A2)
 
@@ -329,8 +335,8 @@ These are **exposure gradients, not mediation**.
 The diagram below illustrates the Inputs, Processes and Outputs (IPOs) of the implemented approach:
 
 <div align="center">
-  <a href="https://github.com/chirindaopensource/do_sanctions_backfire/blob/main/do_sanctions_backfire_ipo_main.png">
-    <img src="https://raw.githubusercontent.com/chirindaopensource/do_sanctions_backfire/main/do_sanctions_backfire_ipo_main.png" alt="Inputs, processes and outputs of the two-wave CCEDID coalition-burden pipeline: raw WDI, WGI, Comtrade and policy sources to eligibility, completion, donor factors, counterfactual gaps, level and incremental ATTs, inference, robustness, exposure gradients and reconciliation" width="100%">
+  <a href="https://github.com/chirindaopensource/do_sanctions_backfire/blob/main/do_sanctions_backfire_ipo_main_1.png">
+    <img src="https://raw.githubusercontent.com/chirindaopensource/do_sanctions_backfire/main/do_sanctions_backfire_ipo_main_1.png" alt="Inputs, processes and outputs of the two-wave CCEDID coalition-burden pipeline: raw WDI, WGI, Comtrade and policy sources to eligibility, completion, donor factors, counterfactual gaps, level and incremental ATTs, inference, robustness, exposure gradients and reconciliation" width="100%">
   </a>
 </div>
 
@@ -2977,7 +2983,7 @@ $$
 \widehat g_{it}=Y_{it}-\widehat Y_{it}(\infty).
 $$
 
-For the preferred reference $R=\{2019,2020,2021\}$ and $W_2=\{2022,2023,2024\}$:
+For the preferred reference $R=\lbrace 2019,2020,2021\rbrace$ and $W_2=\lbrace 2022,2023,2024\rbrace$:
 
 $$
 d_i=\frac1{|W_2|}\sum_{t\in W_2}\widehat g_{it}
@@ -3326,7 +3332,7 @@ Tables 1 and 2 of the paper are descriptive and are not part of this producer's 
 ```text
 do_sanctions_backfire/
 ├── do_sanctions_backfire_draft.ipynb    # 41-cell notebook: config contract + Tasks 1-33
-├── do_sanctions_backfire_ipo_main.png   # Inputs-Processes-Outputs diagram
+├── do_sanctions_backfire_ipo_main_1.png   # Inputs-Processes-Outputs diagram
 ├── config.yaml                          # 26-entry study configuration, version 1.1.0
 ├── study_config.json                    # the same configuration mapping as JSON
 ├── usage_example.md                     # the verified usage example embedded above
